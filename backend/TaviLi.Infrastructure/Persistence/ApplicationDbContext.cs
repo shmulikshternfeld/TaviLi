@@ -42,9 +42,7 @@ namespace TaviLi.Infrastructure.Persistence
                     .HasForeignKey(m => m.CourierUserId)
                     .OnDelete(DeleteBehavior.SetNull); // אם שליח נמחק, המשימה חוזרת ל-null
 
-                // הגדרת דיוק עבור מחיר
-                entity.Property(m => m.OfferedPrice)
-                    .HasColumnType("decimal(18,2)");
+                
             });
         }
     }

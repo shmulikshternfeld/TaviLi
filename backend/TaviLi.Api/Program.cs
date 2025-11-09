@@ -13,7 +13,7 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 
 // 2. רישום ה-DbContext
 builder.Services.AddDbContext<TaviLi.Infrastructure.Persistence.ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
+    options.UseSqlite(connectionString));
 
 // 3. רישום שירותי Identity
 builder.Services.AddIdentity<TaviLi.Domain.Entities.User, TaviLi.Domain.Entities.Role>(options =>
