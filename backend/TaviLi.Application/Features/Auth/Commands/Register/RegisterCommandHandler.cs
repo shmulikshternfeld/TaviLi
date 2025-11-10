@@ -5,6 +5,7 @@ using TaviLi.Domain.Entities;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using TaviLi.Application.Common.Interfaces;
 
 namespace TaviLi.Application.Features.Auth.Commands.Register
 {
@@ -12,11 +13,13 @@ namespace TaviLi.Application.Features.Auth.Commands.Register
     public class RegisterCommandHandler : IRequestHandler<RegisterCommand, AuthResponseDto>
     {
         private readonly UserManager<User> _userManager;
-        // נצטרך גם RoleManager ו-IAuthService (ליצירת טוקן) - נוסיף אותם בהמשך
+        private readonly IAuthService _authService;
+        // נצטרך גם RoleManager - נוסיף אותם בהמשך
 
-        public RegisterCommandHandler(UserManager<User> userManager)
+        public RegisterCommandHandler(UserManager<User> userManager, IAuthService authService)
         {
             _userManager = userManager;
+            _authService = authService;
         }
 
         public async Task<AuthResponseDto> Handle(RegisterCommand request, CancellationToken cancellationToken)
@@ -73,11 +76,11 @@ namespace TaviLi.Application.Features.Auth.Commands.Register
                 ProfileImageUrl = user.ProfileImageUrl,
                 Roles = rolesToAssign
             };
-
+            var token = await _authService.CreateTokenAsync(user, rolesToAssign);
             return new AuthResponseDto
             {
                 User = userProfile,
-                Token = "NOT_IMPLEMENTED_YET" // placeholder
+                Token = token
             };
         }
     }

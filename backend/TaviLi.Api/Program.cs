@@ -3,6 +3,11 @@ using Microsoft.AspNetCore.Identity;
 using TaviLi.Domain.Entities;
 using TaviLi.Infrastructure.Persistence;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+
+
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -28,14 +33,50 @@ builder.Services.AddIdentity<TaviLi.Domain.Entities.User, TaviLi.Domain.Entities
 })
     .AddEntityFrameworkStores<TaviLi.Infrastructure.Persistence.ApplicationDbContext>()
     .AddDefaultTokenProviders();
+// 3.5 רישום שירותי אימות (Authentication) עם JWT
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? throw new InvalidOperationException("JWT Key not found.")))
+    };
+});    
 // 4. רישום שירותי MediatR
 builder.Services.AddMediatR(cfg => 
-    cfg.RegisterServicesFromAssembly(typeof(TaviLi.Application.Common.Dtos.AuthResponseDto).Assembly));    
+    cfg.RegisterServicesFromAssembly(typeof(TaviLi.Application.Common.Dtos.AuthResponseDto).Assembly));
+// 5. רישום שירות הטוקנים
+builder.Services.AddScoped<TaviLi.Application.Common.Interfaces.IAuthService, TaviLi.Infrastructure.Services.AuthService>();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
-
+// --- הרצת Seeding לבסיס הנתונים ---
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var roleManager = services.GetRequiredService<RoleManager<Role>>();
+        await TaviLi.Infrastructure.Persistence.ApplicationDbContextSeed.SeedRolesAsync(roleManager);
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred while seeding the database.");
+    }
+}
+// --- סיום Seeding ---
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
