@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using TaviLi.Domain.Entities;
 using TaviLi.Infrastructure.Persistence;
+using MediatR;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -27,6 +28,9 @@ builder.Services.AddIdentity<TaviLi.Domain.Entities.User, TaviLi.Domain.Entities
 })
     .AddEntityFrameworkStores<TaviLi.Infrastructure.Persistence.ApplicationDbContext>()
     .AddDefaultTokenProviders();
+// 4. רישום שירותי MediatR
+builder.Services.AddMediatR(cfg => 
+    cfg.RegisterServicesFromAssembly(typeof(TaviLi.Application.Common.Dtos.AuthResponseDto).Assembly));    
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
