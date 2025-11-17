@@ -1,39 +1,38 @@
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
-using TaviLi.Domain.Entities;
-using TaviLi.Infrastructure.Persistence;
+using System.Text;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
-
-
-
+using TaviLi.Domain.Entities;
+using TaviLi.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// 1. קריאת מחרוזת החיבור
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+// --- 1. הוספת שירותים (Services) ---
 
-// 2. רישום ה-DbContext
-builder.Services.AddDbContext<TaviLi.Infrastructure.Persistence.ApplicationDbContext>(options =>
+//  מפעיל את ה-Controllers
+builder.Services.AddControllers(); 
+
+//  חיבור לבסיס הנתונים (SQLite)
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
+    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(connectionString));
 
-// 3. רישום שירותי Identity
-builder.Services.AddIdentity<TaviLi.Domain.Entities.User, TaviLi.Domain.Entities.Role>(options =>
+//  הגדרת Identity
+builder.Services.AddIdentity<User, Role>(options =>
 {
-    // הגדרות אופציונליות לסיסמה (מומלץ ל-MVP)
     options.Password.RequireDigit = false;
     options.Password.RequiredLength = 4;
     options.Password.RequireNonAlphanumeric = false;
     options.Password.RequireUppercase = false;
     options.Password.RequireLowercase = false;
 })
-    .AddEntityFrameworkStores<TaviLi.Infrastructure.Persistence.ApplicationDbContext>()
-    .AddDefaultTokenProviders();
-// 3.5 רישום שירותי אימות (Authentication) עם JWT
+.AddEntityFrameworkStores<ApplicationDbContext>()
+.AddDefaultTokenProviders();
+
+//  הגדרת אימות (Authentication) עם JWT
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -51,24 +50,25 @@ builder.Services.AddAuthentication(options =>
         ValidAudience = builder.Configuration["Jwt:Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? throw new InvalidOperationException("JWT Key not found.")))
     };
-});    
-// 4. רישום שירותי MediatR
+});
+
+//  MediatR
 builder.Services.AddMediatR(cfg => 
     cfg.RegisterServicesFromAssembly(typeof(TaviLi.Application.Common.Dtos.AuthResponseDto).Assembly));
-// 5. רישום שירות הטוקנים
+
+//  שירות יצירת הטוקנים
 builder.Services.AddScoped<TaviLi.Application.Common.Interfaces.IAuthService, TaviLi.Infrastructure.Services.AuthService>();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
 
 var app = builder.Build();
-// --- הרצת Seeding לבסיס הנתונים ---
+
+// --- 2. הרצת Seeding (יצירת תפקידים אוטומטית) ---
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     try
     {
         var roleManager = services.GetRequiredService<RoleManager<Role>>();
-        await TaviLi.Infrastructure.Persistence.ApplicationDbContextSeed.SeedRolesAsync(roleManager);
+        await ApplicationDbContextSeed.SeedRolesAsync(roleManager);
     }
     catch (Exception ex)
     {
@@ -76,37 +76,16 @@ using (var scope = app.Services.CreateScope())
         logger.LogError(ex, "An error occurred while seeding the database.");
     }
 }
-// --- סיום Seeding ---
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
+
+// --- 3. הגדרת הצינור (Pipeline) ---
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+//  הפעלת מערכת האימות וההרשאות
+app.UseAuthentication();
+app.UseAuthorization();
 
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+// מיפוי ה-Controllers 
+app.MapControllers();
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
