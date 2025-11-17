@@ -1,0 +1,29 @@
+using Microsoft.AspNetCore.Http;
+    using System.Security.Claims;
+    using TaviLi.Application.Common.Interfaces;
+
+    namespace TaviLi.Infrastructure.Services
+    {
+        public class CurrentUserService : ICurrentUserService
+        {
+            private readonly IHttpContextAccessor _httpContextAccessor;
+
+            public CurrentUserService(IHttpContextAccessor httpContextAccessor)
+            {
+                _httpContextAccessor = httpContextAccessor;
+            }
+
+            public string? GetUserId()
+            {
+                // קורא את הטוקן מהבקשה הנוכחית ומחזיר את ה-Claim מסוג 'sub' (Subject/NameIdentifier)
+                // שהגדרנו ב-AuthService
+                return _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
+            }
+
+            public string? GetUserEmail()
+            {
+                // קורא את הטוקן מהבקשה הנוכחית ומחזיר את ה-Claim מסוג 'email'
+                return _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.Email);
+            }
+        }
+    }

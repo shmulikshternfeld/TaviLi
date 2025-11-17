@@ -59,6 +59,12 @@ builder.Services.AddMediatR(cfg =>
 //  שירות יצירת הטוקנים
 builder.Services.AddScoped<TaviLi.Application.Common.Interfaces.IAuthService, TaviLi.Infrastructure.Services.AuthService>();
 
+// מאפשר לכל שירות לבקש גישה ל-HttpContext הנוכחי
+builder.Services.AddHttpContextAccessor(); 
+
+// רושם את השירות החדש שיצרנו
+builder.Services.AddScoped<TaviLi.Application.Common.Interfaces.ICurrentUserService, TaviLi.Infrastructure.Services.CurrentUserService>();
+
 var app = builder.Build();
 
 // --- 2. הרצת Seeding (יצירת תפקידים אוטומטית) ---
