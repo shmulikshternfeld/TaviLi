@@ -1,14 +1,14 @@
     using MediatR;
-    using Microsoft.AspNetCore.Authorization; // חשוב!
+    using Microsoft.AspNetCore.Authorization; 
     using Microsoft.AspNetCore.Mvc;
     using TaviLi.Application.Common.Dtos;
-    using TaviLi.Application.Features.Users.Queries.GetCurrentUser; // Namespace מעודכן
+    using TaviLi.Application.Features.Users.Queries.GetCurrentUser;
 
     namespace TaviLi.Api.Controllers
     {
         [Route("api/[controller]")] // api/users
         [ApiController]
-        [Authorize] // <--- זהו "השומר"!
+        [Authorize] 
         public class UsersController : ControllerBase
         {
             private readonly IMediator _mediator;
