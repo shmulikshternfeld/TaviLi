@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http;
     using System.Security.Claims;
     using TaviLi.Application.Common.Interfaces;
+    using System.IdentityModel.Tokens.Jwt;
 
     namespace TaviLi.Infrastructure.Services
     {
@@ -25,5 +26,11 @@ using Microsoft.AspNetCore.Http;
                 // קורא את הטוקן מהבקשה הנוכחית ומחזיר את ה-Claim מסוג 'email'
                 return _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.Email);
             }
+            public string? GetUserName()
+        {
+            // ClaimTypes.Name בדרך כלל ממפה את ה-claim הסטנדרטי של "name" מהטוקן
+            return _httpContextAccessor.HttpContext?.User?.FindFirstValue(JwtRegisteredClaimNames.Name) 
+                   ?? _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.Name);
+        }
         }
     }

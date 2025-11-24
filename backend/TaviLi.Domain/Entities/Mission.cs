@@ -8,7 +8,7 @@ namespace TaviLi.Domain.Entities
 
         // --- קשרי גומלין ---
         public required string CreatorUserId { get; set; } // ID של יוצר המשימה 
-        public required virtual User CreatorUser { get; set; }
+        public  virtual User? CreatorUser { get; set; }
 
         public string? CourierUserId { get; set; } // ID של השליח 
         public virtual User? CourierUser { get; set; }

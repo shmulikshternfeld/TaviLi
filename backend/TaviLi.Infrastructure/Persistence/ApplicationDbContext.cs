@@ -1,13 +1,14 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using TaviLi.Domain.Entities;
+using TaviLi.Application.Common.Interfaces;
 
 namespace TaviLi.Infrastructure.Persistence
 {
     // אנו יורשים מ-IdentityDbContext במקום מ-DbContext רגיל
-    // מכיוON שזה אוטומטית מגדיר לנו את טבלאות ה-Identity (Users, Roles וכו')
+    // מכיוון שזה אוטומטית מגדיר לנו את טבלאות ה-Identity (Users, Roles וכו')
     // אנו מציינים לו להשתמש במחלקות 'User' ו-'Role' המותאמות אישית שיצרנו
-    public class ApplicationDbContext : IdentityDbContext<User, Role, string>
+    public class ApplicationDbContext : IdentityDbContext<User, Role, string> , IApplicationDbContext
     {
         // מגדיר את הטבלה 'Missions' בבסיס הנתונים
         public DbSet<Mission> Missions { get; set; }

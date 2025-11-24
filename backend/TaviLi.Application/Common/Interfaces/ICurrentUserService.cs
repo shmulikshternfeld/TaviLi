@@ -5,5 +5,6 @@ namespace TaviLi.Application.Common.Interfaces
             // יחזיר את ה-ID של המשתמש מהטוקן
             string? GetUserId();
             string? GetUserEmail();
+            string? GetUserName();
         }
     }
