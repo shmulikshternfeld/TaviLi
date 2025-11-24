@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TaviLi.Application.Common.Dtos;
 using TaviLi.Application.Features.Missions.Commands.CreateMission;
+using TaviLi.Application.Features.Missions.Queries.GetOpenMissions;
 
 namespace TaviLi.Api.Controllers
 {
@@ -23,6 +24,16 @@ namespace TaviLi.Api.Controllers
         public async Task<ActionResult<MissionDto>> Create(CreateMissionCommand command)
         {
             var result = await _mediator.Send(command);
+            return Ok(result);
+        }
+        // GET api/missions/open?pickupCity=Rehovot&dropoffCity=TelAviv
+        // GET api/missions/open
+        [HttpGet("open")]
+        [AllowAnonymous] // אפשר לגשת גם בלי התחברות
+        public async Task<ActionResult<List<MissionSummaryDto>>> GetOpen([FromQuery] GetOpenMissionsQuery query)
+        {
+            // [FromQuery] לוקח את הפרמטרים מה-URL ומכניס אותם לאובייקט query אוטומטית
+            var result = await _mediator.Send(query);
             return Ok(result);
         }
     }
