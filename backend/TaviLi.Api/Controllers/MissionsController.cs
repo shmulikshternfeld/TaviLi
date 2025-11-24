@@ -5,6 +5,8 @@ using TaviLi.Application.Common.Dtos;
 using TaviLi.Application.Features.Missions.Commands.CreateMission;
 using TaviLi.Application.Features.Missions.Queries.GetOpenMissions;
 using TaviLi.Application.Features.Missions.Commands.AcceptMission;
+using TaviLi.Application.Features.Missions.Queries.GetMyCreatedMissions;
+using TaviLi.Application.Features.Missions.Queries.GetMyAssignedMissions;
 
 namespace TaviLi.Api.Controllers
 {
@@ -58,6 +60,23 @@ namespace TaviLi.Api.Controllers
             {
                 return BadRequest(new { message = ex.Message });
             }
+        }
+        // GET api/missions/my-created
+        [HttpGet("my-created")]
+        [Authorize(Roles = "Client")] // רק יוצרים יכולים לראות את המשימות שיצרו
+        public async Task<ActionResult<List<MissionSummaryDto>>> GetMyCreated()
+        {
+            var result = await _mediator.Send(new GetMyCreatedMissionsQuery());
+            return Ok(result);
+        }
+
+        // GET api/missions/my-assigned
+        [HttpGet("my-assigned")]
+        [Authorize(Roles = "Courier")] // רק שליחים יכולים לראות את המשימות שהוקצו להם
+        public async Task<ActionResult<List<MissionSummaryDto>>> GetMyAssigned()
+        {
+            var result = await _mediator.Send(new GetMyAssignedMissionsQuery());
+            return Ok(result);
         }
     }
 }
