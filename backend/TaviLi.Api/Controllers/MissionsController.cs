@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using TaviLi.Application.Common.Dtos;
 using TaviLi.Application.Features.Missions.Commands.CreateMission;
 using TaviLi.Application.Features.Missions.Queries.GetOpenMissions;
+using TaviLi.Application.Features.Missions.Commands.AcceptMission;
 
 namespace TaviLi.Api.Controllers
 {
@@ -35,6 +36,28 @@ namespace TaviLi.Api.Controllers
             // [FromQuery] לוקח את הפרמטרים מה-URL ומכניס אותם לאובייקט query אוטומטית
             var result = await _mediator.Send(query);
             return Ok(result);
+        }
+        // PUT api/missions/{id}/accept
+        [HttpPut("{id}/accept")]
+        [Authorize(Roles = "Courier")] //  רק שליחים יכולים !
+        public async Task<ActionResult<MissionDto>> Accept(int id)
+        {
+            // אנחנו יוצרים את הפקודה ושמים בה את ה-ID מה-URL
+            var command = new AcceptMissionCommand { Id = id };
+            
+            try 
+            {
+                var result = await _mediator.Send(command);
+                return Ok(result);
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
     }
 }
