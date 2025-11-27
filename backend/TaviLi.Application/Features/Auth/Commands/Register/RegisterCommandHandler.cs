@@ -65,9 +65,6 @@ namespace TaviLi.Application.Features.Auth.Commands.Register
                 await _userManager.AddToRolesAsync(user, rolesToAssign);
             }
 
-            // --- חסר שלב 4: יצירת JWT Token ---
-            // כרגע נחזיר DTO חלקי. נתקן את זה בשלב הבא כשניצור את שירות הטוקנים.
-
             var userProfile = new UserProfileDto
             {
                 Id = user.Id,

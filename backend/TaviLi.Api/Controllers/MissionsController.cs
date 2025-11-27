@@ -7,6 +7,7 @@ using TaviLi.Application.Features.Missions.Queries.GetOpenMissions;
 using TaviLi.Application.Features.Missions.Commands.AcceptMission;
 using TaviLi.Application.Features.Missions.Queries.GetMyCreatedMissions;
 using TaviLi.Application.Features.Missions.Queries.GetMyAssignedMissions;
+using TaviLi.Application.Features.Missions.Commands.UpdateStatus;
 
 namespace TaviLi.Api.Controllers
 {
@@ -77,6 +78,32 @@ namespace TaviLi.Api.Controllers
         {
             var result = await _mediator.Send(new GetMyAssignedMissionsQuery());
             return Ok(result);
+        }
+        // PUT api/missions/{id}/status
+        [HttpPut("{id}/status")]
+        [Authorize(Roles = "Courier")] // רק שליחים יכולים לגשת
+        public async Task<ActionResult<MissionDto>> UpdateStatus(int id, [FromBody] UpdateMissionStatusDto dto)
+        {
+            // מיפוי ידני מה-DTO לפקודה
+            var command = new UpdateMissionStatusCommand 
+            { 
+                Id = id, 
+                Status = dto.Status 
+            };
+
+            try
+            {
+                var result = await _mediator.Send(command);
+                return Ok(result);
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Forbid(ex.Message); // מחזיר 403 Forbidden
+            }
         }
     }
 }
