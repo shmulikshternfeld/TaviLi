@@ -1,35 +1,27 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { Injectable, signal, computed, inject } from '@angular/core';
+import { Observable, tap } from 'rxjs';
 import { ApiService } from './api.service';
-import { LoginRequest, RegisterRequest, AuthResponse, UserProfile } from '../models/user.model';
+import { AuthResponse, LoginRequest, RegisterRequest, UserProfile } from '../models/user.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   private readonly TOKEN_KEY = 'auth_token';
-  
-  // מחזיק את המצב הנוכחי של המשתמש
-  private currentUserSubject = new BehaviorSubject<UserProfile | null>(null);
-  public currentUser$ = this.currentUserSubject.asObservable();
+  private apiService = inject(ApiService);
 
-  constructor(private apiService: ApiService) {
+  // --- State Management with Signals ---
+  // מחזיק את המשתמש הנוכחי (או null אם לא מחובר)
+  currentUser = signal<UserProfile | null>(null);
+
+  // נגזרת מחושבת: האם המשתמש מחובר? מתעדכן אוטומטית כשה-currentUser משתנה
+  isLoggedIn = computed(() => !!this.currentUser());
+
+  constructor() {
     this.loadUserFromStorage();
   }
 
-  // בדיקה ראשונית בעליית האפליקציה אם יש טוקן שמור
-  private loadUserFromStorage(): void {
-    const token = localStorage.getItem(this.TOKEN_KEY);
-    if (token) {
-      // אופציונלי: כאן ניתן להוסיף קריאה ל-GET /users/me כדי לוודא שהטוקן עדיין בתוקף
-      // ל-MVP, נניח שאם יש טוקן אנחנו מחוברים (או נפענח אותו אם צריך פרטים מיידית)
-      // לצורך הדוגמה נבצע קריאה לשרת לרענון פרטים:
-      this.getMe().subscribe({
-         next: (user) => this.currentUserSubject.next(user),
-         error: () => this.logout() // אם הטוקן לא תקין, נתנתק
-      });
-    }
-  }
+  // --- Public Actions ---
 
   register(data: RegisterRequest): Observable<AuthResponse> {
     return this.apiService.post<AuthResponse>('/auth/register', data).pipe(
@@ -45,31 +37,40 @@ export class AuthService {
 
   logout(): void {
     localStorage.removeItem(this.TOKEN_KEY);
-    this.currentUserSubject.next(null);
-    // כאן אפשר להוסיף ניווט לדף הבית
+    this.currentUser.set(null); // עדכון ה-Signal
   }
 
-  private handleAuthSuccess(response: AuthResponse): void {
-    localStorage.setItem(this.TOKEN_KEY, response.token);
-    this.currentUserSubject.next(response.user);
-  }
-
-  // קבלת פרטי המשתמש הנוכחי מהשרת
+  // קבלת פרטי המשתמש העדכניים מהשרת
   getMe(): Observable<UserProfile> {
     return this.apiService.get<UserProfile>('/users/me');
   }
 
-  // עזרים (Helpers)
+  // --- Helpers ---
+
   getToken(): string | null {
     return localStorage.getItem(this.TOKEN_KEY);
   }
 
-  isAuthenticated(): boolean {
-    return !!this.getToken(); // מחזיר true אם יש טוקן
-  }
-  
   hasRole(role: string): boolean {
-    const user = this.currentUserSubject.value;
+    const user = this.currentUser(); // קריאה לערך של ה-Signal
     return user ? user.roles.includes(role) : false;
+  }
+
+  // --- Internal Logic ---
+
+  private handleAuthSuccess(response: AuthResponse): void {
+    localStorage.setItem(this.TOKEN_KEY, response.token);
+    this.currentUser.set(response.user); // עדכון ה-Signal
+  }
+
+  private loadUserFromStorage(): void {
+    const token = this.getToken();
+    if (token) {
+      // אם יש טוקן, ננסה למשוך את פרטי המשתמש מהשרת
+      this.getMe().subscribe({
+        next: (user) => this.currentUser.set(user),
+        error: () => this.logout()
+      });
+    }
   }
 }
