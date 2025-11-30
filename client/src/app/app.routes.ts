@@ -1,3 +1,17 @@
 import { Routes } from '@angular/router';
 
-export const routes: Routes = [];
+export const routes: Routes = [
+  {
+    path: 'auth',
+    loadChildren: () => import('./features/auth/auth.routes').then(m => m.AUTH_ROUTES)
+  },
+  {
+    path: 'missions',
+    loadChildren: () => import('./features/missions/missions.routes').then(m => m.MISSIONS_ROUTES)
+  },
+  {
+    path: '',
+    redirectTo: 'missions',
+    pathMatch: 'full'
+  }
+];

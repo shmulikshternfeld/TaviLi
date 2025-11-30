@@ -14,6 +14,17 @@ var builder = WebApplication.CreateBuilder(args);
 //  מפעיל את ה-Controllers
 builder.Services.AddControllers(); 
 
+//  הגדרת CORS כדי לאפשר לאנגולר לתקשר עם ה-API
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAngularDev",
+        builder =>
+        {
+            builder.WithOrigins("http://localhost:4200") // הכתובת של האנגולר
+                   .AllowAnyHeader()
+                   .AllowAnyMethod();
+        });
+});
 //  חיבור לבסיס הנתונים (SQLite)
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
@@ -88,6 +99,9 @@ using (var scope = app.Services.CreateScope())
 // --- 3. הגדרת הצינור (Pipeline) ---
 
 app.UseHttpsRedirection();
+
+//  הפעלת CORS
+app.UseCors("AllowAngularDev");
 
 //  הפעלת מערכת האימות וההרשאות
 app.UseAuthentication();

@@ -1,0 +1,60 @@
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-5 col-lg-4">
+      <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
+          <h2 class="text-center mb-4 text-primary fw-bold">התחברות</h2>
+          
+          <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+            
+            <div class="mb-3">
+              <label for="email" class="form-label">אימייל</label>
+              <input 
+                type="email" 
+                id="email" 
+                class="form-control" 
+                formControlName="email"
+                [class.is-invalid]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
+              >
+              <div class="invalid-feedback">
+                נא להזין אימייל תקין.
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label for="password" class="form-label">סיסמה</label>
+              <input 
+                type="password" 
+                id="password" 
+                class="form-control" 
+                formControlName="password"
+                [class.is-invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+              >
+              <div class="invalid-feedback">
+                נא להזין סיסמה.
+              </div>
+            </div>
+
+            <div *ngIf="errorMessage" class="alert alert-danger text-center" role="alert">
+              {{ errorMessage }}
+            </div>
+
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary py-2" [disabled]="loginForm.invalid || isSubmitting">
+                <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                התחבר
+              </button>
+            </div>
+          </form>
+
+          <hr class="my-4">
+
+          <div class="text-center">
+            <span class="text-muted">עדיין אין לך חשבון? </span>
+            <a routerLink="/auth/register" class="text-decoration-none fw-bold">הירשם עכשיו</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
