@@ -67,9 +67,17 @@
       </td>
       
       <td class="text-end pe-4">
-        <button class="btn btn-action btn-sm px-4 shadow-sm" 
-                (click)="onAcceptMissionClick(mission)">
-          קבל משלוח
+        <button 
+          class="btn btn-action btn-sm px-4 shadow-sm" 
+          (click)="onAcceptMissionClick(mission)"
+          [disabled]="busyMissionId() === mission.id"
+        >
+          @if (busyMissionId() === mission.id) {
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            משייך...
+          } @else {
+            קבל משלוח
+          }
         </button>
       </td>
     </tr>

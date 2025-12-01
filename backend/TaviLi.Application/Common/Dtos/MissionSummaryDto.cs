@@ -12,5 +12,6 @@ namespace TaviLi.Application.Common.Dtos
         public MissionStatus Status { get; set; }
         public DateTime CreationTime { get; set; }
         public string? CreatorName { get; set; }
+        public string? CreatorUserId { get; set; }
     }
 }

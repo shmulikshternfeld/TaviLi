@@ -52,7 +52,8 @@ namespace TaviLi.Application.Features.Missions.Queries.GetOpenMissions
                 Status = m.Status,
                 CreationTime = m.CreationTime,
                 // שימוש חכם בשם או באימייל
-                CreatorName = m.CreatorUser?.Name ?? m.CreatorUser?.Email 
+                CreatorName = m.CreatorUser?.Name ?? m.CreatorUser?.Email,
+                CreatorUserId = m.CreatorUserId
             }).ToList();
 
             return dtos;

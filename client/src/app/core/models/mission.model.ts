@@ -25,4 +25,5 @@ export interface Mission {
   status: MissionStatus;
   creationTime: Date;
   creatorName?: string;
+  creatorUserId?: string;
 }

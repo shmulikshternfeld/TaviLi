@@ -15,8 +15,14 @@ export class MissionService {
     return this.api.get<Mission[]>('/missions/open');
   }
 
-  // בעתיד נוסיף כאן:  acceptMission, etc.
-  createMission(missionData: Partial<Mission>): Observable<Mission> {
+  // בעתיד נוסיף כאן:   etc.
+    createMission(missionData: Partial<Mission>): Observable<Mission> {
     return this.api.post<Mission>('/missions', missionData);
     }
+
+    acceptMission(missionId: number): Observable<void> {
+    // ה-API הוא PUT /api/missions/{id}/accept
+    // אנחנו לא שולחים body, לכן {} ריק
+    return this.api.put<void>(`/missions/${missionId}/accept`, {});
+  }
 }

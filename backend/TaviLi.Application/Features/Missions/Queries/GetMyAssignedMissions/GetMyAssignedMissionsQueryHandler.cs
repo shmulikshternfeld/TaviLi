@@ -36,7 +36,8 @@ namespace TaviLi.Application.Features.Missions.Queries.GetMyAssignedMissions
                 OfferedPrice = m.OfferedPrice,
                 Status = m.Status,
                 CreationTime = m.CreationTime,
-                CreatorName = m.CreatorUser?.Name ?? m.CreatorUser?.Email
+                CreatorName = m.CreatorUser?.Name ?? m.CreatorUser?.Email,
+                CreatorUserId = m.CreatorUserId
             }).ToList();
         }
     }
