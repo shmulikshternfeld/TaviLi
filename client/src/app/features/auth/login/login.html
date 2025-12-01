@@ -1,58 +1,75 @@
 <div class="container mt-5">
   <div class="row justify-content-center">
     <div class="col-md-5 col-lg-4">
-      <div class="card shadow-sm border-0">
-        <div class="card-body p-4">
-          <h2 class="text-center mb-4 text-primary fw-bold">התחברות</h2>
+      
+      <div class="text-center mb-4">
+        <div class="d-inline-flex align-items-center justify-content-center bg-white shadow-sm rounded-circle p-3">
+          <i class="bi bi-box-seam-fill text-primary" style="font-size: 2rem;"></i>
+        </div>
+        <h4 class="mt-3 fw-bold text-dark">ברוכים הבאים ל-TaviLi</h4>
+      </div>
+
+      <div class="auth-card">
+        <h2 class="text-center mb-4 fs-4">כניסה למערכת</h2>
+        
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
           
-          <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-            
-            <div class="mb-3">
-              <label for="email" class="form-label">אימייל</label>
+          <div class="mb-3">
+            <label for="email" class="form-label">אימייל</label>
+            <div class="input-group">
+              <span class="input-group-text border-0 bg-light rounded-start text-muted ps-3">
+                <i class="bi bi-envelope"></i>
+              </span>
               <input 
                 type="email" 
                 id="email" 
-                class="form-control" 
+                class="form-control rounded-end" 
                 formControlName="email"
+                placeholder="name@example.com"
                 [class.is-invalid]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
               >
-              <div class="invalid-feedback">
-                נא להזין אימייל תקין.
-              </div>
             </div>
+          </div>
 
-            <div class="mb-4">
-              <label for="password" class="form-label">סיסמה</label>
+          <div class="mb-4">
+            <label for="password" class="form-label">סיסמה</label>
+            <div class="input-group">
+              <span class="input-group-text border-0 bg-light rounded-start text-muted ps-3">
+                <i class="bi bi-lock"></i>
+              </span>
               <input 
                 type="password" 
                 id="password" 
-                class="form-control" 
+                class="form-control rounded-end" 
                 formControlName="password"
+                placeholder="••••••••"
                 [class.is-invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
               >
-              <div class="invalid-feedback">
-                נא להזין סיסמה.
-              </div>
             </div>
-
-            <div *ngIf="errorMessage" class="alert alert-danger text-center" role="alert">
-              {{ errorMessage }}
-            </div>
-
-            <div class="d-grid">
-              <button type="submit" class="btn btn-primary py-2" [disabled]="loginForm.invalid || isSubmitting">
-                <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                התחבר
-              </button>
-            </div>
-          </form>
-
-          <hr class="my-4">
-
-          <div class="text-center">
-            <span class="text-muted">עדיין אין לך חשבון? </span>
-            <a routerLink="/auth/register" class="text-decoration-none fw-bold">הירשם עכשיו</a>
           </div>
+
+          @if (errorMessage) {
+            <div class="alert alert-danger d-flex align-items-center p-2 mb-3" role="alert">
+              <i class="bi bi-exclamation-circle-fill me-2"></i>
+              <div class="small">{{ errorMessage }}</div>
+            </div>
+          }
+
+          <div class="d-grid">
+            <button type="submit" class="btn btn-primary py-2 shadow-sm" [disabled]="loginForm.invalid || isSubmitting">
+              @if (isSubmitting) {
+                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              }
+              התחבר
+            </button>
+          </div>
+        </form>
+
+        <hr class="my-4 border-light">
+
+        <div class="text-center">
+          <span class="text-muted small">עדיין אין לך חשבון? </span>
+          <a routerLink="/auth/register" class="small">הירשם עכשיו</a>
         </div>
       </div>
     </div>

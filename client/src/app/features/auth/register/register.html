@@ -1,86 +1,92 @@
-<div class="container mt-5">
+<div class="container mt-5 mb-5">
   <div class="row justify-content-center">
     <div class="col-md-6 col-lg-5">
-      <div class="card shadow-sm border-0">
-        <div class="card-body p-4">
-          <h2 class="text-center mb-4 text-primary fw-bold">הרשמה ל-TaviLi</h2>
+      
+      <div class="text-center mb-4">
+        <h4 class="fw-bold text-dark">הצטרפות ל-TaviLi</h4>
+        <p class="text-muted">קהילת השליחויות החברתית של ישראל</p>
+      </div>
+
+      <div class="auth-card">
+        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
           
-          <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-            
-            <div class="mb-3">
-              <label for="name" class="form-label">שם מלא</label>
-              <input 
-                type="text" 
-                id="name" 
-                class="form-control" 
-                formControlName="name"
-                [class.is-invalid]="registerForm.get('name')?.invalid && registerForm.get('name')?.touched"
-              >
-              <div class="invalid-feedback">
-                נא להזין שם מלא (לפחות 2 תווים).
+          <div class="mb-3">
+            <label for="name" class="form-label">שם מלא</label>
+            <input 
+              type="text" 
+              id="name" 
+              class="form-control" 
+              formControlName="name"
+              placeholder="ישראל ישראלי"
+              [class.is-invalid]="registerForm.get('name')?.invalid && registerForm.get('name')?.touched"
+            >
+          </div>
+
+          <div class="mb-3">
+            <label for="email" class="form-label">אימייל</label>
+            <input 
+              type="email" 
+              id="email" 
+              class="form-control" 
+              formControlName="email"
+              placeholder="name@example.com"
+              [class.is-invalid]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched"
+            >
+          </div>
+
+          <div class="mb-4">
+            <label for="password" class="form-label">סיסמה</label>
+            <input 
+              type="password" 
+              id="password" 
+              class="form-control" 
+              formControlName="password"
+              placeholder="לפחות 4 תווים"
+              [class.is-invalid]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched"
+            >
+          </div>
+
+          <div class="mb-4 bg-light p-3 rounded-3 border border-light">
+            <label class="form-label d-block text-dark mb-2">איך תרצה להשתמש באפליקציה?</label>
+            <div class="d-flex flex-column gap-2">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="client" formControlName="wantsToBeClient">
+                <label class="form-check-label" for="client">
+                  <strong>אני רוצה לשלוח חבילות</strong> 📦
+                  <div class="text-muted small">פרסום משימות ואיתור שליחים</div>
+                </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="courier" formControlName="wantsToBeCourier">
+                <label class="form-check-label" for="courier">
+                  <strong>אני רוצה לבצע משלוחים</strong> 🛵
+                  <div class="text-muted small">קבלת משימות והרווחת כסף</div>
+                </label>
               </div>
             </div>
+          </div>
 
-            <div class="mb-3">
-              <label for="email" class="form-label">אימייל</label>
-              <input 
-                type="email" 
-                id="email" 
-                class="form-control" 
-                formControlName="email"
-                [class.is-invalid]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched"
-              >
-              <div class="invalid-feedback">
-                נא להזין כתובת אימייל תקינה.
-              </div>
-            </div>
-
-            <div class="mb-3">
-              <label for="password" class="form-label">סיסמה</label>
-              <input 
-                type="password" 
-                id="password" 
-                class="form-control" 
-                formControlName="password"
-                [class.is-invalid]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched"
-              >
-              <div class="invalid-feedback">
-                הסיסמה חייבת להכיל לפחות 4 תווים.
-              </div>
-            </div>
-
-            <div class="mb-4">
-              <label class="form-label d-block fw-semibold">אני מעוניין/ת:</label>
-              <div class="d-flex gap-3">
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="client" formControlName="wantsToBeClient">
-                  <label class="form-check-label" for="client">לשלוח חבילות</label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="courier" formControlName="wantsToBeCourier">
-                  <label class="form-check-label" for="courier">לבצע משלוחים</label>
-                </div>
-              </div>
-            </div>
-
-            <div *ngIf="errorMessage" class="alert alert-danger text-center" role="alert">
+          @if (errorMessage) {
+            <div class="alert alert-danger text-center py-2 fs-6" role="alert">
               {{ errorMessage }}
             </div>
+          }
 
-            <div class="d-grid">
-              <button type="submit" class="btn btn-primary py-2" [disabled]="registerForm.invalid || isSubmitting">
-                <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                הרשמה
-              </button>
-            </div>
-          </form>
-
-          <hr class="my-4">
-
-          <div class="text-center">
-            <span class="text-muted">כבר יש לך חשבון? </span>
-            <a routerLink="/auth/login" class="text-decoration-none fw-bold">התחבר כאן</a>
+          <div class="d-grid">
+            <button type="submit" class="btn btn-primary py-2 shadow-sm" [disabled]="registerForm.invalid || isSubmitting">
+              @if (isSubmitting) {
+                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              }
+              צור חשבון
+            </button>
           </div>
+        </form>
+
+        <hr class="my-4 border-light">
+
+        <div class="text-center">
+          <span class="text-muted small">כבר יש לך חשבון? </span>
+          <a routerLink="/auth/login" class="small fw-bold">התחבר כאן</a>
         </div>
       </div>
     </div>

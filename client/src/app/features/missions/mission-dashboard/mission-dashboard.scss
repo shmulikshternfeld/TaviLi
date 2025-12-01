@@ -1,0 +1,68 @@
+// שימוש במשתנים הגלובליים
+.modern-table-container {
+  // החוקים כבר הוגדרו ב-styles.scss, אבל כאן נוסיף ספציפיקציות
+  background: white;
+}
+
+.table {
+  thead th {
+    background-color: rgba(0, 184, 148, 0.05); // Teal בהיר מאוד לרקע הכותרת
+    color: var(--text-grey);
+    font-weight: 600;
+    font-size: 0.85rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: none;
+  }
+
+  tbody tr {
+    transition: background-color 0.2s ease;
+    border-bottom: 1px solid rgba(0,0,0,0.03); // קו מפריד כמעט בלתי נראה
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &:hover {
+      background-color: rgba(0, 184, 148, 0.02); // היילייט עדין מאוד בהובר
+    }
+  }
+
+  td {
+    padding-top: 1.2rem;
+    padding-bottom: 1.2rem;
+    color: var(--text-dark);
+    font-size: 0.95rem;
+  }
+}
+
+// תג מחיר
+.price-tag {
+  font-weight: 700;
+  color: var(--primary-teal);
+  font-size: 1.1rem;
+}
+
+// עיגול שם משתמש
+.avatar-circle {
+  width: 32px;
+  height: 32px;
+  background-color: #E0F7FA; // תכלת בהיר
+  color: var(--primary-teal);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.8rem;
+}
+
+// באדג' לחבילה
+.package-badge {
+  background-color: #F1F2F6;
+  color: var(--text-grey);
+  padding: 6px 12px;
+  border-radius: 20px; // עיגול מלא
+  font-size: 0.85rem;
+  font-weight: 500;
+}

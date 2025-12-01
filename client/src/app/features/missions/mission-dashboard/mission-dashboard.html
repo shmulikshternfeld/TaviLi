@@ -1,12 +1,90 @@
 <div class="container mt-5">
-  <div class="alert alert-success text-center">
-    <h1>ברוכים הבאים ל-TaviLi! 🚚</h1>
-    <p>התחברת בהצלחה.</p>
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="mb-1">לוח משלוחים פעיל</h2>
+      <p class="text-muted mb-0">מצא את המשימה הבאה שלך</p>
+    </div>
+    <button class="btn btn-primary shadow-sm" (click)="onCreateMissionClick()">
+  <i class="bi bi-plus-lg ms-2"></i> יצירת משלוח
+</button>
   </div>
-  
-  <div class="row mt-4">
-    <div class="col-12">
-      <h3>לוח משימות (בקרוב...)</h3>
-      </div>
-  </div>
+
+  @if (isLoading()) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status"></div>
+      <p class="mt-3 text-muted">טוען נתונים...</p>
+    </div>
+  }
+
+  @if (!isLoading()) {
+    <div class="modern-table-container">
+      <table class="table table-hover mb-0 align-middle">
+        <thead class="table-light">
+          <tr>
+            <th scope="col" class="ps-4">מזהה</th>
+            <th scope="col">סוג חבילה</th>
+            <th scope="col">מאיפה <i class="bi bi-arrow-left text-muted mx-1"></i> לאיפה</th>
+            <th scope="col">תמחור</th>
+            <th scope="col">נוצר ע"י</th>
+            <th scope="col" class="text-end pe-4">פעולות</th>
+          </tr>
+        </thead>
+        <tbody>
+  @for (mission of missions(); track mission.id) {
+    <tr>
+      <td class="ps-4 text-muted">#{{ mission.id }}</td>
+      
+      <td>
+        <span class="package-badge">
+          {{ mission.packageSize | packageSize }}
+        </span>
+      </td>
+      
+      <td>
+        <div class="d-flex flex-column">
+          <span class="fw-medium text-dark">
+            <i class="bi bi-geo-alt-fill text-primary ms-1"></i> {{ mission.pickupAddress }}
+          </span>
+          <span class="text-muted small mt-1">
+            <i class="bi bi-flag-fill text-secondary ms-1"></i> {{ mission.dropoffAddress }}
+          </span>
+        </div>
+      </td>
+      
+      <td>
+        <span class="price-tag">
+          {{ mission.offeredPrice | currency:'ILS':'symbol':'1.0-0' }}
+        </span>
+      </td>
+      
+      <td>
+        <div class="d-flex align-items-center">
+          <div class="avatar-circle ms-2">
+            {{ mission.creatorName?.charAt(0) || '?' }}
+          </div>
+          <span class="text-dark small">{{ mission.creatorName || 'אנונימי' }}</span>
+        </div>
+      </td>
+      
+      <td class="text-end pe-4">
+        <button class="btn btn-action btn-sm px-4 shadow-sm" 
+                (click)="onAcceptMissionClick(mission)">
+          קבל משלוח
+        </button>
+      </td>
+    </tr>
+  }
+
+  @if (missions().length === 0) {
+    <tr>
+      <td colspan="6" class="text-center py-5 text-muted">
+        <i class="bi bi-box-seam display-4 d-block mb-3 opacity-50"></i>
+        אין משלוחים פתוחים כרגע.
+      </td>
+    </tr>
+  }
+</tbody>
+      </table>
+    </div>
+  }
 </div>

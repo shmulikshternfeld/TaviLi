@@ -1,0 +1,41 @@
+.glass-navbar {
+  background: var(--glass-bg); /* הרקע החצי שקוף שהגדרנו */
+  backdrop-filter: blur(10px); /* טשטוש הרקע מאחורי הבר */
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 0.8rem 0;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+}
+
+.navbar-brand {
+  font-size: 1.4rem;
+  letter-spacing: -0.5px;
+}
+
+.nav-link {
+  color: var(--text-grey);
+  font-weight: 500;
+  
+  &:hover {
+    color: var(--primary-teal);
+  }
+}
+
+.active-link {
+  color: var(--primary-teal) !important;
+  font-weight: 700;
+}
+
+.avatar-circle-sm {
+  width: 32px;
+  height: 32px;
+  background-color: #E0F7FA;
+  color: var(--primary-teal);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+  margin-left: 10px;
+}

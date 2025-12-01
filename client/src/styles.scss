@@ -1,2 +1,133 @@
-/* You can add global styles to this file, and also import other style files */
-@import "../node_modules/bootstrap/scss/bootstrap";
+/* ייבוא Bootstrap */
+@import "bootstrap/scss/bootstrap";
+@import "bootstrap-icons/font/bootstrap-icons.css";
+
+/* --- TaviLi Design System --- */
+:root {
+  /* צבעים */
+  --primary-teal: #00B894;       /* ראשי - חדשנות */
+  --action-coral: #FF7675;       /* פעולה - הנעה */
+  --bg-surface: #F9F9F9;         /* רקע כללי */
+  --text-dark: #2D3436;          /* כותרות */
+  --text-grey: #636E72;          /* טקסט רץ */
+  --glass-bg: rgba(255, 255, 255, 0.85); /* אפקט זכוכית */
+
+  /* מידות */
+  --radius-lg: 16px;
+  --radius-sm: 8px;
+  
+  /* אפקטים */
+  --shadow-soft: 0 4px 15px rgba(0, 0, 0, 0.05);
+  --shadow-hover: 0 8px 25px rgba(0, 184, 148, 0.15); /* צל ירקרק עדין בהובר */
+}
+
+/* הגדרות בסיס */
+body {
+  font-family: 'Heebo', sans-serif;
+  background-color: var(--bg-surface);
+  color: var(--text-dark);
+  text-align: right; /* ווידוא יישור לימין */
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-dark);
+  font-weight: 700;
+}
+
+/* כפתורים מותאמים אישית */
+.btn-primary {
+  background-color: var(--primary-teal);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-weight: 500;
+  padding: 0.6rem 1.2rem;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: darken(#00B894, 5%);
+    box-shadow: 0 4px 12px rgba(0, 184, 148, 0.4);
+    transform: translateY(-1px);
+  }
+}
+
+.btn-action {
+  background-color: var(--action-coral);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  
+  &:hover {
+    background-color: darken(#FF7675, 5%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(255, 118, 117, 0.4);
+  }
+}
+
+/* עיצוב גלובלי לטבלאות שייראו כמו אפליקציה */
+.modern-table-container {
+  background: white;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+  overflow: hidden; /* כדי שהפינות העגולות לא ייחתכו */
+  border: none;
+}
+
+/* --- עיצוב טפסים מודרני (TaviLi Forms) --- */
+
+/* כרטיס מעוצב (כמו ב-Login/Register) */
+.auth-card {
+  border: none;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); /* צל עמוק יותר למרכז המסך */
+  background: white;
+  padding: 2rem;
+}
+
+/* שדות קלט מודרניים */
+.form-control {
+  background-color: #f1f3f5; /* אפור בהיר מאוד */
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+
+  &:focus {
+    background-color: white;
+    border-color: var(--primary-teal);
+    box-shadow: 0 0 0 4px rgba(0, 184, 148, 0.1); /* הילה בצבע Teal */
+    color: var(--text-dark);
+  }
+}
+
+/* תוויות (Labels) */
+.form-label {
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: var(--text-grey);
+  margin-bottom: 0.5rem;
+}
+
+/* צ'קבוקסים בצבע המותג */
+.form-check-input:checked {
+  background-color: var(--primary-teal);
+  border-color: var(--primary-teal);
+}
+
+.form-check-input:focus {
+  border-color: var(--primary-teal);
+  box-shadow: 0 0 0 4px rgba(0, 184, 148, 0.1);
+}
+
+/* לינקים בצבע המותג */
+a {
+  color: var(--primary-teal);
+  text-decoration: none;
+  font-weight: 600;
+  
+  &:hover {
+    color: darken(#00B894, 10%);
+    text-decoration: underline;
+  }
+}
