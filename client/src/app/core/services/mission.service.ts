@@ -15,5 +15,8 @@ export class MissionService {
     return this.api.get<Mission[]>('/missions/open');
   }
 
-  // בעתיד נוסיף כאן: createMission, acceptMission, etc.
+  // בעתיד נוסיף כאן:  acceptMission, etc.
+  createMission(missionData: Partial<Mission>): Observable<Mission> {
+    return this.api.post<Mission>('/missions', missionData);
+    }
 }

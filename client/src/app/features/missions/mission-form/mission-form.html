@@ -1,0 +1,101 @@
+<div class="container mt-5 mb-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      
+      <div class="text-center mb-4">
+        <h2 class="fw-bold text-dark">יצירת משלוח חדש</h2>
+        <p class="text-muted">מלא את הפרטים ונמצא לך שליח במהירות</p>
+      </div>
+
+      <div class="auth-card"> <form [formGroup]="form" (ngSubmit)="onSubmit()">
+          
+          <div class="row g-3 mb-3">
+            <div class="col-12">
+              <label class="form-label">מאיפה אוספים? <i class="bi bi-geo-alt text-danger"></i></label>
+              <input 
+                type="text" 
+                class="form-control" 
+                formControlName="pickupAddress" 
+                placeholder="למשל: בן יהודה 3, תל אביב"
+                [class.is-invalid]="form.get('pickupAddress')?.invalid && form.get('pickupAddress')?.touched"
+              >
+              @if (form.get('pickupAddress')?.hasError('required') && form.get('pickupAddress')?.touched) {
+                <div class="text-danger small">שדה חובה</div>
+              }
+              @if (form.get('pickupAddress')?.hasError('minlength') && form.get('pickupAddress')?.touched) {
+                <div class="text-danger small">כתובת חייבת להכיל לפחות 5 תווים</div>
+              }
+            </div>
+            
+            <div class="col-12">
+              <label class="form-label">לאן שולחים? <i class="bi bi-flag text-success"></i></label>
+              <input 
+                type="text" 
+                class="form-control" 
+                formControlName="dropoffAddress" 
+                placeholder="למשל: הרצל 50, רמת גן"
+                [class.is-invalid]="form.get('dropoffAddress')?.invalid && form.get('dropoffAddress')?.touched"
+              >
+              @if (form.get('dropoffAddress')?.hasError('minlength') && form.get('dropoffAddress')?.touched) {
+                <div class="text-danger small">כתובת חייבת להכיל לפחות 5 תווים</div>
+              }
+            </div>
+          </div>
+
+          <hr class="my-4 border-light">
+
+          <div class="mb-3">
+            <label class="form-label">מה שולחים? (תיאור קצר)</label>
+            <textarea 
+                class="form-control" 
+                rows="2" 
+                formControlName="packageDescription" 
+                placeholder="למשל: מעטפה עם מסמכים חשובים"
+                [class.is-invalid]="form.get('packageDescription')?.invalid && form.get('packageDescription')?.touched"
+            ></textarea>
+             @if (form.get('packageDescription')?.hasError('minlength') && form.get('packageDescription')?.touched) {
+                <div class="text-danger small">תיאור חייב להכיל לפחות 3 תווים</div>
+              }
+          </div>
+
+          <div class="row g-3 mb-4">
+            <div class="col-md-6">
+              <label class="form-label">גודל החבילה</label>
+              <select class="form-select" formControlName="packageSize">
+                <option [ngValue]="null" disabled>בחר גודל...</option>
+                @for (size of packageSizes; track size.value) {
+                  <option [ngValue]="size.value">{{ size.label }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">כמה תשלם? (₪)</label>
+              <div class="input-group">
+                <input type="number" class="form-control" formControlName="offeredPrice" placeholder="50">
+                <span class="input-group-text bg-light text-muted">₪</span>
+              </div>
+              @if (form.get('offeredPrice')?.hasError('min') && form.get('offeredPrice')?.touched) {
+                <div class="text-danger small mt-1">המינימום הוא 10 ש"ח</div>
+              }
+            </div>
+          </div>
+
+          <div class="d-grid">
+            <button type="submit" class="btn btn-action py-2 shadow-sm" [disabled]="form.invalid || isSubmitting">
+              @if (isSubmitting) {
+                <span class="spinner-border spinner-border-sm me-2"></span>
+              }
+              פרסם משלוח
+            </button>
+          </div>
+
+          <div class="text-center mt-3">
+            <a routerLink="/missions/dashboard" class="text-muted text-decoration-none small">ביטול וחזרה ללוח</a>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
