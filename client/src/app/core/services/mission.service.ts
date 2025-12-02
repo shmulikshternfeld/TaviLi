@@ -33,4 +33,8 @@ export class MissionService {
   updateMissionStatus(id: number, status: MissionStatus): Observable<Mission> {
     return this.api.put<Mission>(`/missions/${id}/status`, { status });
   }
+
+  getMyCreatedMissions(): Observable<Mission[]> {
+    return this.api.get<Mission[]>('/missions/my-created');
+  }
 }
