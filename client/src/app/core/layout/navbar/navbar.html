@@ -10,6 +10,14 @@
         <li class="nav-item">
           <a class="nav-link" routerLink="/missions/dashboard" routerLinkActive="active-link">לוח משלוחים</a>
         </li>
+        
+        @if (authService.hasRole('Courier')) {
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/missions/my-missions" routerLinkActive="active-link">
+              המשלוחים שלי 🛵
+            </a>
+          </li>
+        }
       </ul>
 
       <div class="d-flex align-items-center gap-3">

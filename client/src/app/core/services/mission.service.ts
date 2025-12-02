@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { ApiService } from './api.service';
 import { Observable } from 'rxjs';
-import { Mission } from '../models/mission.model';
+import { Mission, MissionStatus } from '../models/mission.model';
 
 @Injectable({
   providedIn: 'root'
@@ -24,5 +24,13 @@ export class MissionService {
     // ה-API הוא PUT /api/missions/{id}/accept
     // אנחנו לא שולחים body, לכן {} ריק
     return this.api.put<void>(`/missions/${missionId}/accept`, {});
+  }
+
+  getMyAssignedMissions(): Observable<Mission[]> {
+    return this.api.get<Mission[]>('/missions/my-assigned');
+  }
+  
+  updateMissionStatus(id: number, status: MissionStatus): Observable<Mission> {
+    return this.api.put<Mission>(`/missions/${id}/status`, { status });
   }
 }
