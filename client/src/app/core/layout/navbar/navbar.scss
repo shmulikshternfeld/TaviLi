@@ -1,21 +1,54 @@
 .glass-navbar {
-  background: var(--glass-bg); /* הרקע החצי שקוף שהגדרנו */
-  backdrop-filter: blur(10px); /* טשטוש הרקע מאחורי הבר */
+  background: var(--glass-bg);
+  /* הרקע החצי שקוף שהגדרנו */
+  backdrop-filter: blur(10px);
+  /* טשטוש הרקע מאחורי הבר */
   -webkit-backdrop-filter: blur(10px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.3);
   padding: 0.8rem 0;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
 }
 
 .navbar-brand {
-  font-size: 1.4rem;
+  font-family: 'Outfit', sans-serif; // clean, modern, premium
+  font-size: 1.8rem;
   letter-spacing: -0.5px;
+  padding: 0;
+  text-decoration: none;
+
+  .brand-icon {
+    font-size: 2rem;
+    background: linear-gradient(135deg, #00B894 0%, #64ffda 100%);
+    background-clip: text; // Standard property
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 2px 4px rgba(0, 184, 148, 0.3));
+    transition: transform 0.3s ease;
+  }
+
+  &:hover .brand-icon {
+    transform: scale(1.1) rotate(-10deg);
+  }
+}
+
+.brand-text-tavi {
+  color: #2D3436;
+  font-weight: 700;
+}
+
+.brand-text-li {
+  background: linear-gradient(135deg, #00B894 0%, #64ffda 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 800; // Extra bold for impact
+  margin-right: -1px; // Tighten visual gap
 }
 
 .nav-link {
   color: var(--text-grey);
   font-weight: 500;
-  
+
   &:hover {
     color: var(--primary-teal);
   }
