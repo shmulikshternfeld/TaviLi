@@ -10,81 +10,131 @@
   </div>
 
   @if (isLoading()) {
-    <div class="text-center py-5">
-      <div class="spinner-border text-primary" role="status"></div>
-    </div>
+  <div class="text-center py-5">
+    <div class="spinner-border text-primary" role="status"></div>
+  </div>
   }
 
   @if (!isLoading()) {
-    <div class="modern-table-container">
-      <table class="table table-hover mb-0 align-middle">
-        <thead class="table-light">
-          <tr>
-            <th scope="col" class="ps-4">מזהה</th>
-            <th scope="col">סטטוס</th>
-            <th scope="col">יעד ומקור</th>
-            <th scope="col">פרטי חבילה</th>
-            <th scope="col">הצעת מחיר</th>
-            <th scope="col" class="text-end pe-4">תאריך יצירה</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (mission of missions(); track mission.id) {
-            <tr>
-              <td class="ps-4 text-muted">#{{ mission.id }}</td>
-              
-              <td>
-                <span class="badge rounded-pill px-3 py-2" 
-                  [ngClass]="{
+  @if (!isLoading()) {
+  <!-- Desktop Table View -->
+  <div class="modern-table-container d-none d-md-block">
+    <table class="table table-hover mb-0 align-middle">
+      <thead class="table-light">
+        <tr>
+          <th scope="col" class="ps-4">מזהה</th>
+          <th scope="col">סטטוס</th>
+          <th scope="col">יעד ומקור</th>
+          <th scope="col">פרטי חבילה</th>
+          <th scope="col">הצעת מחיר</th>
+          <th scope="col" class="text-end pe-4">תאריך יצירה</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (mission of missions(); track mission.id) {
+        <tr>
+          <td class="ps-4 text-muted">#{{ mission.id }}</td>
+
+          <td>
+            <span class="badge rounded-pill px-3 py-2" [ngClass]="{
                     'bg-secondary': mission.status === MissionStatus.Open,
                     'bg-info': mission.status === MissionStatus.Accepted,
                     'bg-warning text-dark': mission.status === MissionStatus.InProgress_Pickup || mission.status === MissionStatus.InProgress_Delivery,
                     'bg-primary': mission.status === MissionStatus.Collected,
                     'bg-success': mission.status === MissionStatus.Completed
                   }">
-                  {{ mission.status | missionStatus }}
-                </span>
-              </td>
+              {{ mission.status | missionStatus }}
+            </span>
+          </td>
 
-              <td>
-                <div class="d-flex flex-column small">
-                  <span class="text-truncate" style="max-width: 200px;" title="{{ mission.pickupAddress }}">
-                    <i class="bi bi-geo-alt text-danger"></i> {{ mission.pickupAddress }}
-                  </span>
-                  <span class="text-truncate" style="max-width: 200px;" title="{{ mission.dropoffAddress }}">
-                    <i class="bi bi-flag text-success"></i> {{ mission.dropoffAddress }}
-                  </span>
-                </div>
-              </td>
+          <td>
+            <div class="d-flex flex-column small">
+              <span class="text-truncate" style="max-width: 200px;" title="{{ mission.pickupAddress }}">
+                <i class="bi bi-geo-alt text-danger"></i> {{ mission.pickupAddress }}
+              </span>
+              <span class="text-truncate" style="max-width: 200px;" title="{{ mission.dropoffAddress }}">
+                <i class="bi bi-flag text-success"></i> {{ mission.dropoffAddress }}
+              </span>
+            </div>
+          </td>
 
-              <td>
-                <span class="package-badge text-dark bg-light border">
-                  {{ mission.packageSize | packageSize }}
-                </span>
-              </td>
+          <td>
+            <span class="package-badge text-dark bg-light border">
+              {{ mission.packageSize | packageSize }}
+            </span>
+          </td>
 
-              <td class="fw-bold text-dark">
-                {{ mission.offeredPrice }} ₪
-              </td>
+          <td class="fw-bold text-dark">
+            {{ mission.offeredPrice }} ₪
+          </td>
 
-              <td class="text-end pe-4 text-muted small">
-                {{ mission.creationTime | date:'dd/MM/yy HH:mm' }}
-              </td>
-            </tr>
-          }
+          <td class="text-end pe-4 text-muted small">
+            {{ mission.creationTime | date:'dd/MM/yy HH:mm' }}
+          </td>
+        </tr>
+        }
 
-          @if (missions().length === 0) {
-            <tr>
-              <td colspan="6" class="text-center py-5 text-muted">
-                <i class="bi bi-box-seam display-4 d-block mb-3 opacity-50"></i>
-                לא נמצאו משלוחים פעילים.
-                <br>
-                <a routerLink="/missions/create" class="fw-bold mt-2 d-inline-block">צור את המשלוח הראשון שלך</a>
-              </td>
-            </tr>
-          }
-        </tbody>
-      </table>
+        @if (missions().length === 0) {
+        <tr>
+          <td colspan="6" class="text-center py-5 text-muted">
+            <i class="bi bi-box-seam display-4 d-block mb-3 opacity-50"></i>
+            לא נמצאו משלוחים פעילים.
+            <br>
+            <a routerLink="/missions/create" class="fw-bold mt-2 d-inline-block">צור את המשלוח הראשון שלך</a>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Mobile Card View -->
+  <div class="d-md-none">
+    @for (mission of missions(); track mission.id) {
+    <div class="mission-card-mobile">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <span class="badge rounded-pill px-3 py-2" [ngClass]="{
+                    'bg-secondary': mission.status === MissionStatus.Open,
+                    'bg-info': mission.status === MissionStatus.Accepted,
+                    'bg-warning text-dark': mission.status === MissionStatus.InProgress_Pickup || mission.status === MissionStatus.InProgress_Delivery,
+                    'bg-primary': mission.status === MissionStatus.Collected,
+                    'bg-success': mission.status === MissionStatus.Completed
+                  }">
+          {{ mission.status | missionStatus }}
+        </span>
+        <span class="price-tag">{{ mission.offeredPrice }} ₪</span>
+      </div>
+
+      <div class="mb-3">
+        <div class="d-flex align-items-center mb-2">
+          <i class="bi bi-geo-alt-fill text-danger ms-2"></i>
+          <span class="fw-medium text-truncate">{{ mission.pickupAddress }}</span>
+        </div>
+        <div class="timeline-connector ms-2 border-end border-2 border-dashed" style="height: 15px; margin-right: 7px;">
+        </div>
+        <div class="d-flex align-items-center mt-1">
+          <i class="bi bi-flag-fill text-success ms-2"></i>
+          <span class="text-muted text-truncate">{{ mission.dropoffAddress }}</span>
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+        <div class="text-muted small">
+          <div>#{{ mission.id }} • {{ mission.packageSize | packageSize }}</div>
+          <div>{{ mission.creationTime | date:'dd/MM HH:mm' }}</div>
+        </div>
+      </div>
     </div>
+    }
+
+    @if (missions().length === 0) {
+    <div class="text-center py-5 text-muted bg-white rounded-4 shadow-sm">
+      <i class="bi bi-box-seam display-1 d-block mb-3 opacity-50"></i>
+      <p>לא נמצאו משלוחים פעילים.</p>
+      <a routerLink="/missions/create" class="btn btn-primary btn-sm mt-2">צור משלוח חדש</a>
+    </div>
+    }
+  </div>
+  }
   }
 </div>

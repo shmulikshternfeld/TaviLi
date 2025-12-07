@@ -26,12 +26,26 @@
 
   <div class="divider mx-3"></div>
 
-  <!-- גודל חבילה -->
-  <div class="filter-item">
+  <!-- גודל חבילה (דסקטופ - רשימה נגללת) -->
+  <div class="filter-item d-none d-md-flex">
     <i class="bi bi-box-seam"></i>
     <select [(ngModel)]="packageSize" (ngModelChange)="onFilterChange()" class="compact-select">
       <option value="All">כל הגדלים</option>
-      <option *ngFor="let opt of sizeOptions" [value]="opt.value">{{opt.label}}</option>
+      <option *ngFor="let opt of sizeOptions" [ngValue]="opt.value">{{opt.label}}</option>
     </select>
+  </div>
+
+  <!-- גודל חבילה (מובייל - כפתורים) -->
+  <div class="filter-item mobile-package-selector d-md-none">
+    <div class="package-chips-container">
+      <button class="chip" [class.active]="packageSize === 'All'" (click)="setPackageSize('All')">
+        הכל
+      </button>
+      @for (opt of sizeOptions; track opt.value) {
+      <button class="chip" [class.active]="packageSize === opt.value" (click)="setPackageSize(opt.value)">
+        {{ opt.label }}
+      </button>
+      }
+    </div>
   </div>
 </div>

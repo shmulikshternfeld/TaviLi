@@ -8,7 +8,11 @@
       </div>
     </a>
 
-    <div class="collapse navbar-collapse">
+    <button class="navbar-toggler" type="button" (click)="toggleMenu()" [attr.aria-expanded]="isMenuOpen()">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" [class.show]="isMenuOpen()">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
           <a class="nav-link" routerLink="/missions/dashboard" routerLinkActive="active-link">לוח משלוחים</a>

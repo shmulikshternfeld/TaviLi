@@ -22,9 +22,9 @@ export class MissionForm {
 
   // המרה של ה-Enum למערך כדי להציג ב-Select
   packageSizes = [
-    { value: PackageSize.Small, label: 'חבילה קטנה (מעטפה / שקית)' },
-    { value: PackageSize.Medium, label: 'חבילה בינונית (קופסת נעליים)' },
-    { value: PackageSize.Large, label: 'חבילה גדולה (ארגז / מזוודה)' }
+    { value: PackageSize.Small, label: 'חבילה קטנה (מעטפה / שקית)', shortLabel: 'קטן', icon: '✉️' },
+    { value: PackageSize.Medium, label: 'חבילה בינונית (קופסת נעליים)', shortLabel: 'בינוני', icon: '📦' },
+    { value: PackageSize.Large, label: 'חבילה גדולה (ארגז / מזוודה)', shortLabel: 'גדול', icon: '🚛' }
   ];
 
   constructor() {
@@ -41,7 +41,7 @@ export class MissionForm {
     if (this.form.invalid) return;
 
     this.isSubmitting = true;
-    
+
     // המרה למספר (למקרה שה-Select מחזיר סטרינג)
     const formValue = {
       ...this.form.value,

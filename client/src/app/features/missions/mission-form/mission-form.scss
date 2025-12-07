@@ -1,0 +1,43 @@
+.size-card {
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 1rem 0.5rem;
+    text-align: center;
+    cursor: pointer;
+    background: white;
+    transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    &:hover {
+        background-color: #f8f9fa;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    &.selected {
+        border-color: var(--primary-teal);
+        background-color: rgba(0, 184, 148, 0.08); // Light Teal
+        color: var(--primary-teal);
+        box-shadow: 0 0 0 1px var(--primary-teal);
+        font-weight: 600;
+    }
+
+    .size-icon {
+        font-size: 1.8rem;
+        line-height: 1;
+    }
+
+    .size-label {
+        font-size: 0.9rem;
+        color: inherit;
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--primary-teal);
+        outline-offset: 2px;
+    }
+}

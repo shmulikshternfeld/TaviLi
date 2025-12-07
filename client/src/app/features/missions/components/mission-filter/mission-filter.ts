@@ -43,4 +43,9 @@ export class MissionFilterComponent {
             packageSize: this.packageSize
         });
     }
+
+    setPackageSize(size: PackageSize | 'All') {
+        this.packageSize = size;
+        this.onFilterChange();
+    }
 }

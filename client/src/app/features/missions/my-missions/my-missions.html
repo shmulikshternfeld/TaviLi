@@ -7,93 +7,162 @@
   </div>
 
   @if (isLoading()) {
-    <div class="text-center py-5">
-      <div class="spinner-border text-primary" role="status"></div>
-    </div>
+  <div class="text-center py-5">
+    <div class="spinner-border text-primary" role="status"></div>
+  </div>
   }
 
   @if (!isLoading()) {
-    <div class="modern-table-container">
-      <table class="table table-hover mb-0 align-middle">
-        <thead class="table-light">
-          <tr>
-            <th scope="col" class="ps-4">מזהה</th>
-            <th scope="col">סטטוס נוכחי</th>
-            <th scope="col">פרטי מסלול</th>
-            <th scope="col">שכר (₪)</th>
-            <th scope="col" class="text-end pe-4">פעולה הבאה</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (mission of missions(); track mission.id) {
-            <tr>
-              <td class="ps-4 fw-bold">#{{ mission.id }}</td>
-              
-              <td>
-                <span class="badge rounded-pill px-3 py-2" 
-                  [ngClass]="{
+  <!-- Desktop Table View -->
+  <div class="modern-table-container d-none d-md-block">
+    <table class="table table-hover mb-0 align-middle">
+      <thead class="table-light">
+        <tr>
+          <th scope="col" class="ps-4">מזהה</th>
+          <th scope="col">סטטוס נוכחי</th>
+          <th scope="col">פרטי מסלול</th>
+          <th scope="col">שכר (₪)</th>
+          <th scope="col" class="text-end pe-4">פעולה הבאה</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (mission of missions(); track mission.id) {
+        <tr>
+          <td class="ps-4 fw-bold">#{{ mission.id }}</td>
+
+          <td>
+            <span class="badge rounded-pill px-3 py-2" [ngClass]="{
                     'bg-info': mission.status === MissionStatus.Accepted,
                     'bg-warning text-dark': mission.status === MissionStatus.InProgress_Pickup || mission.status === MissionStatus.InProgress_Delivery,
                     'bg-primary': mission.status === MissionStatus.Collected,
                     'bg-success': mission.status === MissionStatus.Completed
                   }">
-                  {{ mission.status | missionStatus }}
-                </span>
-              </td>
+              {{ mission.status | missionStatus }}
+            </span>
+          </td>
 
-              <td>
-                <div class="d-flex flex-column small">
-                  <span><strong>איסוף:</strong> {{ mission.pickupAddress }}</span>
-                  <span class="text-muted"><strong>מסירה:</strong> {{ mission.dropoffAddress }}</span>
-                  <span class="mt-1 text-primary">{{ mission.packageSize | packageSize }}</span>
-                </div>
-              </td>
+          <td>
+            <div class="d-flex flex-column small">
+              <span><strong>איסוף:</strong> {{ mission.pickupAddress }}</span>
+              <span class="text-muted"><strong>מסירה:</strong> {{ mission.dropoffAddress }}</span>
+              <span class="mt-1 text-primary">{{ mission.packageSize | packageSize }}</span>
+            </div>
+          </td>
 
-              <td class="fw-bold text-success fs-5">
-                {{ mission.offeredPrice }} ₪
-              </td>
+          <td class="fw-bold text-success fs-5">
+            {{ mission.offeredPrice }} ₪
+          </td>
 
-              <td class="text-end pe-4">
-                @switch (mission.status) {
-                  @case (MissionStatus.Accepted) {
-                    <button class="btn btn-primary btn-sm" (click)="advanceStatus(mission)">
-                      <i class="bi bi-scooter me-1"></i> צא לאיסוף
-                    </button>
-                  }
-                  @case (MissionStatus.InProgress_Pickup) {
-                    <button class="btn btn-warning btn-sm" (click)="advanceStatus(mission)">
-                      <i class="bi bi-box-seam me-1"></i> אשר איסוף
-                    </button>
-                  }
-                  @case (MissionStatus.Collected) {
-                    <button class="btn btn-primary btn-sm" (click)="advanceStatus(mission)">
-                      <i class="bi bi-flag me-1"></i> צא למסירה
-                    </button>
-                  }
-                  @case (MissionStatus.InProgress_Delivery) {
-                    <button class="btn btn-success btn-sm" (click)="advanceStatus(mission)">
-                      <i class="bi bi-check-lg me-1"></i> אשר מסירה
-                    </button>
-                  }
-                  @case (MissionStatus.Completed) {
-                    <span class="text-muted"><i class="bi bi-check-all"></i> הושלם</span>
-                  }
-                }
-              </td>
-            </tr>
-          }
+          <td class="text-end pe-4">
+            @switch (mission.status) {
+            @case (MissionStatus.Accepted) {
+            <button class="btn btn-primary btn-sm" (click)="advanceStatus(mission)">
+              <i class="bi bi-scooter me-1"></i> צא לאיסוף
+            </button>
+            }
+            @case (MissionStatus.InProgress_Pickup) {
+            <button class="btn btn-warning btn-sm" (click)="advanceStatus(mission)">
+              <i class="bi bi-box-seam me-1"></i> אשר איסוף
+            </button>
+            }
+            @case (MissionStatus.Collected) {
+            <button class="btn btn-primary btn-sm" (click)="advanceStatus(mission)">
+              <i class="bi bi-flag me-1"></i> צא למסירה
+            </button>
+            }
+            @case (MissionStatus.InProgress_Delivery) {
+            <button class="btn btn-success btn-sm" (click)="advanceStatus(mission)">
+              <i class="bi bi-check-lg me-1"></i> אשר מסירה
+            </button>
+            }
+            @case (MissionStatus.Completed) {
+            <span class="text-muted"><i class="bi bi-check-all"></i> הושלם</span>
+            }
+            }
+          </td>
+        </tr>
+        }
 
-          @if (missions().length === 0) {
-            <tr>
-              <td colspan="5" class="text-center py-5 text-muted">
-                עדיין לא לקחת משלוחים. 
-                <br>
-                <a routerLink="/missions/dashboard" class="fw-bold">חפש משלוחים בלוח</a>
-              </td>
-            </tr>
-          }
-        </tbody>
-      </table>
+        @if (missions().length === 0) {
+        <tr>
+          <td colspan="5" class="text-center py-5 text-muted">
+            עדיין לא לקחת משלוחים.
+            <br>
+            <a routerLink="/missions/dashboard" class="fw-bold">חפש משלוחים בלוח</a>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Mobile Card View -->
+  <div class="d-md-none">
+    @for (mission of missions(); track mission.id) {
+    <div class="mission-card-mobile">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <span class="badge rounded-pill px-3 py-2" [ngClass]="{
+                    'bg-info': mission.status === MissionStatus.Accepted,
+                    'bg-warning text-dark': mission.status === MissionStatus.InProgress_Pickup || mission.status === MissionStatus.InProgress_Delivery,
+                    'bg-primary': mission.status === MissionStatus.Collected,
+                    'bg-success': mission.status === MissionStatus.Completed
+                  }">
+          {{ mission.status | missionStatus }}
+        </span>
+        <span class="price-tag">{{ mission.offeredPrice }} ₪</span>
+      </div>
+
+      <div class="mb-3">
+        <div class="d-flex align-items-center mb-2">
+          <i class="bi bi-geo-alt-fill text-primary ms-2"></i>
+          <span class="fw-medium">{{ mission.pickupAddress }}</span>
+        </div>
+        <div class="timeline-connector ms-2 border-end border-2 border-dashed" style="height: 15px; margin-right: 7px;">
+        </div>
+        <div class="d-flex align-items-center mt-1">
+          <i class="bi bi-flag-fill text-secondary ms-2"></i>
+          <span class="text-muted">{{ mission.dropoffAddress }}</span>
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+        <span class="small text-muted">#{{ mission.id }} • {{ mission.packageSize | packageSize }}</span>
+
+        @switch (mission.status) {
+        @case (MissionStatus.Accepted) {
+        <button class="btn btn-primary btn-sm flex-grow-1 ms-3" (click)="advanceStatus(mission)">
+          <i class="bi bi-scooter me-1"></i> צא לאיסוף
+        </button>
+        }
+        @case (MissionStatus.InProgress_Pickup) {
+        <button class="btn btn-warning btn-sm flex-grow-1 ms-3" (click)="advanceStatus(mission)">
+          <i class="bi bi-box-seam me-1"></i> אשר איסוף
+        </button>
+        }
+        @case (MissionStatus.Collected) {
+        <button class="btn btn-primary btn-sm flex-grow-1 ms-3" (click)="advanceStatus(mission)">
+          <i class="bi bi-flag me-1"></i> צא למסירה
+        </button>
+        }
+        @case (MissionStatus.InProgress_Delivery) {
+        <button class="btn btn-success btn-sm flex-grow-1 ms-3" (click)="advanceStatus(mission)">
+          <i class="bi bi-check-lg me-1"></i> אשר מסירה
+        </button>
+        }
+        @case (MissionStatus.Completed) {
+        <span class="text-muted"><i class="bi bi-check-all"></i> הושלם</span>
+        }
+        }
+      </div>
     </div>
+    }
+
+    @if (missions().length === 0) {
+    <div class="text-center py-5 text-muted bg-white rounded-4 shadow-sm">
+      <p>עדיין לא לקחת משלוחים.</p>
+      <a routerLink="/missions/dashboard" class="btn btn-outline-primary btn-sm mt-2">חפש משלוחים</a>
+    </div>
+    }
+  </div>
   }
 </div>
