@@ -23,13 +23,20 @@ namespace TaviLi.Application.Features.Missions.Queries.GetOpenMissions
                 .Where(m => m.Status == MissionStatus.Open)
                 .AsQueryable();
 
-            // 2. סינון איסוף (אם הוזן)
+            // 2. חיפוש כללי (עיר שקשורה למשימה - מוצא או יעד)
+            if (!string.IsNullOrWhiteSpace(request.RelatedCity))
+            {
+                query = query.Where(m => m.PickupAddress.Contains(request.RelatedCity) || 
+                                         m.DropoffAddress.Contains(request.RelatedCity));
+            }
+
+            // 3. סינון איסוף ספציפי (אם הוזן)
             if (!string.IsNullOrWhiteSpace(request.PickupCity))
             {
                 query = query.Where(m => m.PickupAddress.Contains(request.PickupCity));
             }
 
-            // 3. סינון מסירה (אם הוזן)
+            // 4. סינון מסירה ספציפי (אם הוזן)
             if (!string.IsNullOrWhiteSpace(request.DropoffCity))
             {
                 query = query.Where(m => m.DropoffAddress.Contains(request.DropoffCity));

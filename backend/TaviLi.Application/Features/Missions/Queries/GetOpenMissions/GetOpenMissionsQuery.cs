@@ -8,5 +8,6 @@ namespace TaviLi.Application.Features.Missions.Queries.GetOpenMissions
     {
         public string? PickupCity { get; set; }  // סינון לפי עיר מוצא
         public string? DropoffCity { get; set; } // סינון לפי עיר יעד
+        public string? RelatedCity { get; set; } // חיפוש עיר (מוצא או יעד)
     }
 }

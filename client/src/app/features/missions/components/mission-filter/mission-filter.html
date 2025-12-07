@@ -1,0 +1,37 @@
+<div class="filter-bar">
+  <!-- חיפוש כללי -->
+  <div class="filter-item">
+    <i class="bi bi-search text-muted"></i>
+    <input type="text" [(ngModel)]="relatedCity" (ngModelChange)="onFilterChange()" placeholder="חיפוש עיר..."
+      class="compact-input">
+  </div>
+
+  <div class="divider mx-3"></div>
+
+  <!-- מאיפה -->
+  <div class="filter-item">
+    <i class="bi bi-geo-alt-fill text-primary"></i>
+    <input type="text" [(ngModel)]="pickupCity" (ngModelChange)="onFilterChange()" placeholder="מאיפה?"
+      class="compact-input">
+  </div>
+
+  <i class="bi bi-arrow-left text-muted mx-2"></i>
+
+  <!-- לאן -->
+  <div class="filter-item">
+    <i class="bi bi-flag-fill text-secondary"></i>
+    <input type="text" [(ngModel)]="dropoffCity" (ngModelChange)="onFilterChange()" placeholder="לאן?"
+      class="compact-input">
+  </div>
+
+  <div class="divider mx-3"></div>
+
+  <!-- גודל חבילה -->
+  <div class="filter-item">
+    <i class="bi bi-box-seam"></i>
+    <select [(ngModel)]="packageSize" (ngModelChange)="onFilterChange()" class="compact-select">
+      <option value="All">כל הגדלים</option>
+      <option *ngFor="let opt of sizeOptions" [value]="opt.value">{{opt.label}}</option>
+    </select>
+  </div>
+</div>
