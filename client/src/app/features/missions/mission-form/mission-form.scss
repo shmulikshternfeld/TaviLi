@@ -1,3 +1,32 @@
+.auth-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+  position: relative; // Important context for z-index
+}
+
+// Styling for the dropdown list of addresses
+.suggestions-list {
+  z-index: 1050; // Ensure it floats above other inputs below it
+  max-height: 200px; // Limit height so it scrolls if the list is long
+  overflow-y: auto;
+  margin-top: 2px;
+  border-radius: 0 0 8px 8px;
+  background-color: white;
+  border: 1px solid rgba(0,0,0,0.125);
+  border-top: none;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+// Highlight effect when hovering over a suggestion
+.list-group-item:hover {
+  background-color: #f0f7ff; 
+  color: #0d6efd; // Bootstrap primary blue
+}
+
 .size-card {
     border: 1px solid #e0e0e0;
     border-radius: 12px;

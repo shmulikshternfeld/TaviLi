@@ -1,95 +1,127 @@
 <div class="container mt-5 mb-5">
   <div class="row justify-content-center">
-    <div class="col-md-8 col-lg-6">
-
+    <div class="col-md-9 col-lg-8">
+      
       <div class="text-center mb-4">
         <h2 class="fw-bold text-dark">יצירת משלוח חדש</h2>
         <p class="text-muted">מלא את הפרטים ונמצא לך שליח במהירות</p>
       </div>
 
-      <div class="auth-card">
+      <div class="auth-card p-4">
         <form [formGroup]="form" (ngSubmit)="onSubmit()">
-
-          <div class="row g-3 mb-3">
-            <div class="col-12">
-              <label class="form-label">מאיפה אוספים? <i class="bi bi-geo-alt text-danger"></i></label>
-              <input type="text" class="form-control" formControlName="pickupAddress"
-                placeholder="למשל: בן יהודה 3, תל אביב"
-                [class.is-invalid]="form.get('pickupAddress')?.invalid && form.get('pickupAddress')?.touched">
-              @if (form.get('pickupAddress')?.hasError('required') && form.get('pickupAddress')?.touched) {
-              <div class="text-danger small">שדה חובה</div>
+          
+          <!-- Section 1: Pickup -->
+          <div class="mb-4">
+            <h5 class="text-primary border-bottom pb-2 mb-3">
+              <i class="bi bi-geo-alt-fill me-2"></i> מאיפה אוספים?
+            </h5>
+            
+            <div class="position-relative">
+              <label class="form-label">כתובת איסוף מלאה</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                formControlName="pickupAddress" 
+                placeholder="התחל להקליד כתובת (עיר, רחוב...)"
+                (input)="onPickupInput($event)"
+                autocomplete="off"
+                [class.is-invalid]="form.get('pickupAddress')?.invalid && form.get('pickupAddress')?.touched"
+              >
+              
+              <!-- Suggestions Dropdown -->
+              @if (pickupSuggestions.length > 0) {
+                <ul class="list-group position-absolute w-100 shadow-sm suggestions-list">
+                  @for (address of pickupSuggestions; track address) {
+                    <li class="list-group-item list-group-item-action cursor-pointer" 
+                        (click)="selectPickup(address)">
+                      {{ address }}
+                    </li>
+                  }
+                </ul>
               }
-              @if (form.get('pickupAddress')?.hasError('minlength') && form.get('pickupAddress')?.touched) {
-              <div class="text-danger small">כתובת חייבת להכיל לפחות 5 תווים</div>
+              
+              @if (form.get('pickupAddress')?.hasError('required') && form.get('pickupAddress')?.touched) {
+                <div class="text-danger small">שדה חובה</div>
               }
             </div>
+          </div>
 
-            <div class="col-12">
-              <label class="form-label">לאן שולחים? <i class="bi bi-flag text-success"></i></label>
-              <input type="text" class="form-control" formControlName="dropoffAddress"
-                placeholder="למשל: הרצל 50, רמת גן"
-                [class.is-invalid]="form.get('dropoffAddress')?.invalid && form.get('dropoffAddress')?.touched">
-              @if (form.get('dropoffAddress')?.hasError('minlength') && form.get('dropoffAddress')?.touched) {
-              <div class="text-danger small">כתובת חייבת להכיל לפחות 5 תווים</div>
+          <!-- Section 2: Dropoff -->
+          <div class="mb-4">
+            <h5 class="text-success border-bottom pb-2 mb-3">
+              <i class="bi bi-flag-fill me-2"></i> לאן שולחים?
+            </h5>
+            
+            <div class="position-relative">
+              <label class="form-label">כתובת מסירה מלאה</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                formControlName="dropoffAddress" 
+                placeholder="התחל להקליד כתובת (עיר, רחוב...)"
+                (input)="onDropoffInput($event)"
+                autocomplete="off"
+                [class.is-invalid]="form.get('dropoffAddress')?.invalid && form.get('dropoffAddress')?.touched"
+              >
+              
+              <!-- Suggestions Dropdown -->
+              @if (dropoffSuggestions.length > 0) {
+                <ul class="list-group position-absolute w-100 shadow-sm suggestions-list">
+                  @for (address of dropoffSuggestions; track address) {
+                    <li class="list-group-item list-group-item-action cursor-pointer" 
+                        (click)="selectDropoff(address)">
+                      {{ address }}
+                    </li>
+                  }
+                </ul>
+              }
+
+              @if (form.get('dropoffAddress')?.hasError('required') && form.get('dropoffAddress')?.touched) {
+                <div class="text-danger small">שדה חובה</div>
               }
             </div>
           </div>
 
           <hr class="my-4 border-light">
 
-          <div class="mb-3">
-            <label class="form-label">מה שולחים? (תיאור קצר)</label>
-            <textarea class="form-control" rows="4" formControlName="packageDescription"
-              placeholder="למשל: מעטפה עם מסמכים חשובים"
-              [class.is-invalid]="form.get('packageDescription')?.invalid && form.get('packageDescription')?.touched"></textarea>
-            @if (form.get('packageDescription')?.hasError('minlength') && form.get('packageDescription')?.touched) {
-            <div class="text-danger small">תיאור חייב להכיל לפחות 3 תווים</div>
-            }
-          </div>
-
-          <div class="mb-4">
-            <label class="form-label d-block mb-2">גודל החבילה</label>
-            <div class="row g-3">
-              @for (size of packageSizes; track size.value) {
-              <div class="col-4">
-                <div class="size-card" [class.selected]="form.get('packageSize')?.value === size.value"
-                  (click)="form.get('packageSize')?.setValue(size.value)" tabindex="0"
-                  (keydown.enter)="form.get('packageSize')?.setValue(size.value)">
-                  <div class="size-icon mb-1">{{ size.icon }}</div>
-                  <div class="size-label">{{ size.shortLabel }}</div>
-                </div>
-              </div>
-              }
-            </div>
-            @if (form.get('packageSize')?.invalid && form.get('packageSize')?.touched) {
-            <div class="text-danger small mt-1">חובה לבחור גודל חבילה</div>
-            }
-          </div>
-
+          <!-- Package Details -->
           <div class="row g-3 mb-4">
             <div class="col-12">
-              <label class="form-label">כמה תשלם? (₪)</label>
+              <label class="form-label">מה שולחים?</label>
+              <textarea class="form-control" rows="2" formControlName="packageDescription" 
+                        placeholder="תיאור קצר של החבילה"></textarea>
+            </div>
+            
+            <div class="col-md-6">
+              <label class="form-label">גודל החבילה</label>
+              <select class="form-select" formControlName="packageSize">
+                <option [ngValue]="null" disabled>בחר גודל...</option>
+                @for (size of packageSizes; track size.value) {
+                  <option [ngValue]="size.value">{{ size.label }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">מחיר מוצע (₪)</label>
               <div class="input-group">
                 <input type="number" class="form-control" formControlName="offeredPrice" placeholder="50">
                 <span class="input-group-text bg-light text-muted">₪</span>
               </div>
-              @if (form.get('offeredPrice')?.hasError('min') && form.get('offeredPrice')?.touched) {
-              <div class="text-danger small mt-1">המינימום הוא 10 ש"ח</div>
-              }
             </div>
           </div>
 
           <div class="d-grid">
-            <button type="submit" class="btn btn-action py-2 shadow-sm" [disabled]="form.invalid || isSubmitting">
+            <button type="submit" class="btn btn-primary py-2 shadow-sm" [disabled]="form.invalid || isSubmitting">
               @if (isSubmitting) {
-              <span class="spinner-border spinner-border-sm me-2"></span>
+                <span class="spinner-border spinner-border-sm me-2"></span>
               }
               פרסם משלוח
             </button>
           </div>
 
           <div class="text-center mt-3">
-            <a routerLink="/missions/dashboard" class="text-muted text-decoration-none small">ביטול וחזרה ללוח</a>
+            <a routerLink="/missions/dashboard" class="text-muted text-decoration-none small">ביטול</a>
           </div>
 
         </form>
