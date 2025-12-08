@@ -1,6 +1,6 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { MissionService } from '../../../core/services/mission.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { Mission, PackageSize } from '../../../core/models/mission.model';
@@ -14,7 +14,7 @@ import { MissionDetailsModalComponent } from '../components/mission-details-moda
   templateUrl: './mission-dashboard.html',
   styleUrl: './mission-dashboard.scss',
   standalone: true,
-  imports: [CommonModule, PackageSizePipe, MissionFilterComponent, MissionDetailsModalComponent]
+  imports: [CommonModule, RouterModule, PackageSizePipe, MissionFilterComponent, MissionDetailsModalComponent]
 })
 export class MissionDashboard implements OnInit {
   private missionService = inject(MissionService);
