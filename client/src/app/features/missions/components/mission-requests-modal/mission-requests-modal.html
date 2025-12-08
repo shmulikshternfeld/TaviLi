@@ -1,0 +1,77 @@
+<div class="custom-modal-wrapper fade show" (click)="onBackdropClick($event)">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content tavili-modal-content">
+
+            <!-- Decorative Header -->
+            <div class="modal-header-banner">
+                <button type="button" class="btn-close-custom" (click)="close.emit()">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+                <h5>בקשות למשלוח</h5>
+                <div class="subtitle">משימה #{{ missionId }}</div>
+            </div>
+
+            <div class="modal-body p-4 bg-light">
+                @if (isLoading()) {
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status"></div>
+                </div>
+                } @else {
+                @if (requests().length === 0) {
+                <div class="text-center text-muted py-5">
+                    <i class="bi bi-inbox fs-1 mb-2"></i>
+                    <p class="mb-0">אין בקשות ממתינות למשלוח זה.</p>
+                </div>
+                } @else {
+                <div class="requests-list">
+                    @for (req of requests(); track req.id) {
+                    <div class="request-card">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="courier-info">
+                                <div class="avatar-circle">
+                                    {{ req.courierName?.charAt(0) || '?' }}
+                                </div>
+                                <div>
+                                    <div class="fw-bold fs-5 text-dark">{{ req.courierName || 'שליח אנונימי' }}</div>
+                                    <div class="text-muted small">
+                                        <i class="bi bi-clock me-1"></i>
+                                        {{ (req.requestTime + 'Z') | date:'dd/MM HH:mm' }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            @if (req.status !== 0) { <!-- Not Pending -->
+                            <span class="badge rounded-pill" [class.bg-success]="req.status === 1"
+                                [class.bg-danger]="req.status === 2">
+                                {{ req.status === 1 ? 'אושר' : 'נדחה' }}
+                            </span>
+                            }
+                        </div>
+
+                        <!-- Actions -->
+                        @if (req.status === 0) { <!-- Pending -->
+                        <div class="d-grid">
+                            <button class="btn btn-primary py-2 shadow-sm rounded-3" (click)="approve(req)"
+                                [disabled]="isProcessing() !== null">
+                                @if (isProcessing() === req.id) {
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                } @else {
+                                אשר את השליח
+                                }
+                            </button>
+                        </div>
+                        }
+                    </div>
+                    }
+                </div>
+                }
+                }
+            </div>
+
+            <div class="d-none">
+                <!-- Hidden footer for spacing if needed -->
+            </div>
+
+        </div>
+    </div>
+</div>

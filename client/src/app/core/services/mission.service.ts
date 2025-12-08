@@ -49,4 +49,16 @@ export class MissionService {
   getMyCreatedMissions(): Observable<Mission[]> {
     return this.api.get<Mission[]>('/missions/my-created');
   }
+
+  requestMission(missionId: number): Observable<number> {
+    return this.api.post<number>(`/missions/${missionId}/request`, {});
+  }
+
+  getMissionRequests(missionId: number): Observable<any[]> {
+    return this.api.get<any[]>(`/missions/${missionId}/requests`);
+  }
+
+  approveRequest(requestId: number): Observable<void> {
+    return this.api.post<void>(`/missions/requests/${requestId}/approve`, {});
+  }
 }

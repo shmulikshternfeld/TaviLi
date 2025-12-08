@@ -14,6 +14,22 @@ export enum MissionStatus {
   Completed = 5
 }
 
+export enum MissionRequestStatus {
+  Pending = 0,
+  Approved = 1,
+  Rejected = 2,
+  Cancelled = 3
+}
+
+export interface MissionRequest {
+  id: number;
+  missionId: number;
+  courierId: string;
+  courierName?: string;
+  status: MissionRequestStatus;
+  requestTime: Date;
+}
+
 // תואם ל-MissionSummaryDto ו-MissionDto
 export interface Mission {
   id: number;
@@ -26,4 +42,7 @@ export interface Mission {
   creationTime: Date;
   creatorName?: string;
   creatorUserId?: string;
+  requests?: MissionRequest[];
+  pendingRequestsCount?: number;
+  myRequestStatus?: MissionRequestStatus; // הסטטוס שלי מול המשימה
 }

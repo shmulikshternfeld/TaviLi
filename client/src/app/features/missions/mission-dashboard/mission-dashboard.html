@@ -71,14 +71,8 @@
           </td>
 
           <td class="text-end pe-4">
-            <button class="btn btn-action btn-sm px-4 shadow-sm" (click)="onAcceptMissionClick(mission)"
-              [disabled]="busyMissionId() === mission.id">
-              @if (busyMissionId() === mission.id) {
-              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-              משייך...
-              } @else {
-              קבל משלוח
-              }
+            <button class="btn btn-primary btn-sm px-4 rounded-pill shadow-sm" (click)="onDetailsClick(mission)">
+              פרטים
             </button>
           </td>
         </tr>
@@ -126,13 +120,8 @@
           <span class="text-muted small">{{ mission.creatorName || 'אנונימי' }}</span>
         </div>
 
-        <button class="btn btn-action btn-sm px-4 shadow-sm" (click)="onAcceptMissionClick(mission)"
-          [disabled]="busyMissionId() === mission.id">
-          @if (busyMissionId() === mission.id) {
-          <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-          } @else {
-          קבל
-          }
+        <button class="btn btn-primary btn-sm px-4 rounded-pill" (click)="onDetailsClick(mission)">
+          פרטים
         </button>
       </div>
     </div>
@@ -146,4 +135,9 @@
     }
   </div>
   }
+
+  <!-- Modal Integration -->
+  <app-mission-details-modal [mission]="selectedMission()" [isRequesting]="isRequesting()"
+    [hasAlreadyRequested]="hasAlreadyRequested()" (close)="closeModal()" (request)="onRequestMission()">
+  </app-mission-details-modal>
 </div>

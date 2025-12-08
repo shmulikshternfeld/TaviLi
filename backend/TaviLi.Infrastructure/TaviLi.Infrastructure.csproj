@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TaviLi.Application\TaviLi.Application.csproj" />
+    <ProjectReference Include="..\TaviLi.Domain\TaviLi.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>

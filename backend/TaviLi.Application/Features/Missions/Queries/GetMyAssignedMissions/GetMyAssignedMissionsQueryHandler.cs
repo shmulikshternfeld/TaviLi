@@ -20,24 +20,31 @@ namespace TaviLi.Application.Features.Missions.Queries.GetMyAssignedMissions
         {
             var userId = _currentUserService.GetUserId();
 
-            // אנו מסננים לפי CourierUserId
             var missions = await _context.Missions
                 .Include(m => m.CreatorUser)
-                .Where(m => m.CourierUserId == userId) // <--- ההבדל היחיד
+                .Include(m => m.Requests) // Checked entity: Property is 'Requests'
+                .Where(m => m.CourierUserId == userId || m.Requests.Any(r => r.CourierId == userId))
                 .OrderByDescending(m => m.CreationTime)
                 .ToListAsync(cancellationToken);
 
-            return missions.Select(m => new MissionSummaryDto
-            {
-                Id = m.Id,
-                PickupAddress = m.PickupAddress,
-                DropoffAddress = m.DropoffAddress,
-                PackageSize = m.PackageSize,
-                OfferedPrice = m.OfferedPrice,
-                Status = m.Status,
-                CreationTime = m.CreationTime,
-                CreatorName = m.CreatorUser?.Name ?? m.CreatorUser?.Email,
-                CreatorUserId = m.CreatorUserId
+            return missions.Select(m => {
+                 // Determine my request status
+                 var myRequest = m.Requests.FirstOrDefault(r => r.CourierId == userId);
+                 
+                 return new MissionSummaryDto
+                 {
+                    Id = m.Id,
+                    PickupAddress = m.PickupAddress,
+                    DropoffAddress = m.DropoffAddress,
+                    PackageDescription = m.PackageDescription,
+                    PackageSize = m.PackageSize,
+                    OfferedPrice = m.OfferedPrice,
+                    Status = m.Status,
+                    CreationTime = m.CreationTime,
+                    CreatorName = m.CreatorUser?.Name ?? m.CreatorUser?.Email,
+                    CreatorUserId = m.CreatorUserId,
+                    MyRequestStatus = myRequest?.Status
+                 };
             }).ToList();
         }
     }
