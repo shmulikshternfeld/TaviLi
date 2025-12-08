@@ -77,6 +77,7 @@ builder.Services.AddHttpContextAccessor();
 
 // רושם את השירות החדש שיצרנו
 builder.Services.AddScoped<TaviLi.Application.Common.Interfaces.ICurrentUserService, TaviLi.Infrastructure.Services.CurrentUserService>();
+builder.Services.AddScoped<TaviLi.Application.Common.Interfaces.IImageService, TaviLi.Infrastructure.Services.CloudinaryService>();
 
 var app = builder.Build();
 

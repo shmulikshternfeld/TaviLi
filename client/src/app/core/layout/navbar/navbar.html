@@ -1,59 +1,128 @@
-<nav class="navbar navbar-expand-lg fixed-top glass-navbar">
-  <div class="container">
-    <a class="navbar-brand fw-bold d-flex align-items-center" routerLink="/" dir="ltr">
-      <i class="bi bi-box-seam-fill brand-icon"></i>
-      <div class="d-flex ms-2">
-        <span class="brand-text-tavi">Tavi</span>
-        <span class="brand-text-li">Li</span>
-      </div>
-    </a>
+<nav class="fixed-top glass-navbar" dir="rtl">
+  <div class="px-3 px-md-5 w-100">
+    <div class="d-flex align-items-center justify-content-between w-100" style="min-height: 70px;">
 
-    <button class="navbar-toggler" type="button" (click)="toggleMenu()" [attr.aria-expanded]="isMenuOpen()">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="collapse navbar-collapse" [class.show]="isMenuOpen()">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/missions/dashboard" routerLinkActive="active-link">לוח משלוחים</a>
-        </li>
-        @if (authService.hasRole('Client')) {
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/missions/my-created" routerLinkActive="active-link">
-            המשלוחים שלי 📦
-          </a>
-        </li>
-        }
-        @if (authService.hasRole('Courier')) {
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/missions/my-missions" routerLinkActive="active-link">
-            המשלוחים שלי 🛵
-          </a>
-        </li>
-        }
-      </ul>
-
+      <!-- RIGHT GROUP (Start in RTL) -->
       <div class="d-flex align-items-center gap-3">
 
-        @if (authService.isLoggedIn()) {
-        <div class="d-flex align-items-center">
-          <span class="text-dark fw-medium me-2">
-            שלום, {{ authService.currentUser()?.name }}
-          </span>
-          <div class="avatar-circle-sm">
-            {{ authService.currentUser()?.name?.charAt(0) }}
-          </div>
-        </div>
-        <button class="btn btn-outline-danger btn-sm rounded-pill px-3" (click)="logout()">
-          יציאה
+        <!-- MOBILE: Toggler -->
+        <button class="btn btn-link text-dark border-0 p-0 d-lg-none" type="button" (click)="toggleMenu()">
+          <i class="bi bi-list fs-1"></i>
         </button>
+
+        <!-- MOBILE: User Avatar -->
+        @if (authService.isLoggedIn()) {
+        <div class="d-lg-none avatar-circle-sm" (click)="toggleUserMenu()">
+          @if (authService.currentUser()?.profileImageUrl) {
+          <img [src]="authService.currentUser()?.profileImageUrl" class="w-100 h-100 rounded-circle object-fit-cover">
+          } @else {
+          {{ authService.currentUser()?.name?.charAt(0) }}
+          }
+        </div>
         }
 
-        @else {
-        <a routerLink="/auth/login" class="text-decoration-none text-dark fw-medium">כניסה</a>
-        <a routerLink="/auth/register" class="btn btn-primary btn-sm rounded-pill px-4 shadow-sm">
-          הצטרפות
-        </a>
+        <!-- DESKTOP: Menu & Actions -->
+        <div class="d-none d-lg-flex align-items-center gap-4">
+
+          <!-- User Actions / Login -->
+          @if (authService.isLoggedIn()) {
+          <div class="position-relative">
+            <div class="d-flex align-items-center user-dropdown-container" (click)="toggleUserMenu()">
+              <div class="avatar-circle-sm ms-2">
+                @if (authService.currentUser()?.profileImageUrl) {
+                <img [src]="authService.currentUser()?.profileImageUrl"
+                  class="w-100 h-100 rounded-circle object-fit-cover">
+                } @else {
+                {{ authService.currentUser()?.name?.charAt(0) }}
+                }
+              </div>
+              <span class="fw-medium text-dark cursor-pointer">
+                {{ authService.currentUser()?.name }} <i class="bi bi-chevron-down small opacity-50"></i>
+              </span>
+            </div>
+
+            <!-- Desktop Dropdown -->
+            @if (isUserMenuOpen()) {
+            <div class="user-dropdown-menu shadow-lg rounded animate-fade-in">
+              <a routerLink="/profile" class="dropdown-item d-flex align-items-center" (click)="closeUserMenu()">
+                <i class="bi bi-person ms-2"></i> הפרופיל שלי
+              </a>
+              <div class="dropdown-divider"></div>
+              <button class="dropdown-item d-flex align-items-center text-danger" (click)="logoutWithConfirmation()">
+                <i class="bi bi-box-arrow-right ms-2"></i> התנתקות
+              </button>
+            </div>
+            <div class="dropdown-backdrop" (click)="closeUserMenu()"></div>
+            }
+          </div>
+          } @else {
+          <a routerLink="/auth/login" class="nav-link fw-bold text-dark">כניסה</a>
+          }
+
+          <!-- Navigation Links -->
+          <div class="d-flex gap-4">
+            <a routerLink="/missions/dashboard" routerLinkActive="active-link" class="nav-link">לוח משלוחים</a>
+            @if (authService.hasRole('Client')) {
+            <a routerLink="/missions/my-created" routerLinkActive="active-link" class="nav-link">המשלוחים שלי 📦</a>
+            }
+            @if (authService.hasRole('Courier')) {
+            <a routerLink="/missions/my-missions" routerLinkActive="active-link" class="nav-link">המשלוחים שלי 🛵</a>
+            }
+          </div>
+
+        </div>
+      </div>
+
+      <!-- LEFT GROUP (End in RTL) - Logo -->
+      <a routerLink="/" class="navbar-brand d-flex align-items-center gap-2" dir="ltr">
+        <div class="d-flex">
+          <span class="brand-text-tavi">Tavi</span>
+          <span class="brand-text-li">Li</span>
+        </div>
+        <i class="bi bi-box-seam-fill brand-icon"></i>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- MOBILE DRAWER (Offcanvasish) -->
+  @if (isMenuOpen()) { <div class="menu-backdrop" (click)="closeMenu()"></div> }
+
+  <div class="mobile-drawer d-lg-none" [class.show]="isMenuOpen()">
+    <div class="p-4 d-flex flex-column h-100">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <span class="fw-bold fs-4">תפריט</span>
+        <button class="btn-close" (click)="closeMenu()"></button>
+      </div>
+
+      <div class="d-flex flex-column gap-3">
+        <a routerLink="/missions/dashboard" (click)="closeMenu()" class="nav-link fs-5"><i class="bi bi-grid ms-2"></i>
+          לוח משלוחים</a>
+        @if (authService.hasRole('Client')) {
+        <a routerLink="/missions/my-created" (click)="closeMenu()" class="nav-link fs-5"><i
+            class="bi bi-box-seam ms-2"></i> המשלוחים שלי</a>
+        }
+        @if (authService.hasRole('Courier')) {
+        <a routerLink="/missions/my-missions" (click)="closeMenu()" class="nav-link fs-5"><i
+            class="bi bi-scooter ms-2"></i> המשלוחים שלי</a>
+        }
+      </div>
+
+      <div class="mt-auto border-top pt-3">
+        @if (authService.isLoggedIn()) {
+        <div class="d-flex align-items-center mb-3" (click)="closeMenu(); router.navigate(['/profile'])">
+          <div class="avatar-circle-sm ms-2">
+            @if (authService.currentUser()?.profileImageUrl) {
+            <img [src]="authService.currentUser()?.profileImageUrl" class="w-100 h-100 rounded-circle object-fit-cover">
+            } @else {
+            {{ authService.currentUser()?.name?.charAt(0) }}
+            }
+          </div>
+          <span class="fw-bold">{{ authService.currentUser()?.name }}</span>
+        </div>
+        <button class="btn btn-outline-danger w-100 py-2 rounded-3" (click)="logoutWithConfirmation()">התנתקות</button>
+        } @else {
+        <a routerLink="/auth/login" (click)="closeMenu()" class="btn btn-primary w-100 py-2 rounded-3">כניסה למערכת</a>
         }
       </div>
     </div>

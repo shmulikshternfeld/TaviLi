@@ -7,6 +7,7 @@ namespace TaviLi.Application.Common.Dtos
         public required string Email { get; set; }
         public required string Name { get; set; }
         public string? ProfileImageUrl { get; set; }
+        public string? PhoneNumber { get; set; }
         public required IList<string> Roles { get; set; }
     }
 }

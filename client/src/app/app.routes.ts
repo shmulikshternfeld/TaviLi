@@ -13,5 +13,13 @@ export const routes: Routes = [
     path: '',
     redirectTo: 'missions',
     pathMatch: 'full'
+  },
+  {
+    path: 'profile',
+    loadComponent: () => import('./features/users/profile/profile').then(m => m.ProfileComponent)
+  },
+  {
+    path: 'profile/:id',
+    loadComponent: () => import('./features/users/profile/profile').then(m => m.ProfileComponent)
   }
 ];

@@ -45,6 +45,24 @@ export class AuthService {
     return this.apiService.get<UserProfile>('/users/me');
   }
 
+  getUserById(id: string): Observable<UserProfile> {
+    return this.apiService.get<UserProfile>(`/users/${id}`);
+  }
+
+  updateProfile(name: string, email?: string, phone?: string, image?: File): Observable<UserProfile> {
+    const formData = new FormData();
+    formData.append('name', name);
+    if (email) formData.append('email', email);
+    if (phone) formData.append('phoneNumber', phone);
+
+    if (image) {
+      formData.append('image', image, image.name);
+    }
+    return this.apiService.put<UserProfile>('/users/profile', formData).pipe(
+      tap(user => this.currentUser.set(user))
+    );
+  }
+
   // --- Helpers ---
 
   getToken(): string | null {
