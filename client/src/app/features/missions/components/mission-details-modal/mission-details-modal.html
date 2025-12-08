@@ -1,0 +1,102 @@
+@if (isOpen) {
+<div class="custom-modal-wrapper fade show" (click)="onBackdropClick($event)">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content animate-pop-in tavili-modal-content">
+
+            <!-- Close Button (Absolute) -->
+            <button type="button" class="btn-close-custom" (click)="close.emit()">
+                <i class="bi bi-x-lg"></i>
+            </button>
+
+            <!-- Decorative Header -->
+            <div class="modal-header-banner">
+                <div class="badge-status" [class]="'status-' + (mission?.status?.toString()?.toLowerCase() || 'open')">
+                    {{ mission?.status || 'Active' }}
+                </div>
+                <h2 class="mission-price">
+                    {{ mission?.offeredPrice | currency:'ILS':'symbol':'1.0-0' }}
+                </h2>
+                <div class="mission-id">משלוח #{{ mission?.id }}</div>
+            </div>
+
+            <!-- Body -->
+            <div class="modal-body px-4 pt-5 pb-4">
+
+                <!-- Route Timeline -->
+                <div class="timeline-container mb-4">
+                    <div class="timeline-item">
+                        <div class="timeline-marker pickup"><i class="bi bi-geo-alt-fill"></i></div>
+                        <div class="timeline-content">
+                            <span class="label">איסוף</span>
+                            <div class="address">{{ mission?.pickupAddress }}</div>
+                        </div>
+                    </div>
+
+                    <div class="timeline-connector"></div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-marker dropoff"><i class="bi bi-flag-fill"></i></div>
+                        <div class="timeline-content">
+                            <span class="label">מסירה</span>
+                            <div class="address">{{ mission?.dropoffAddress }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Info Grid -->
+                <div class="info-grid mb-4">
+                    <div class="info-card">
+                        <i class="bi bi-box-seam-fill mb-2" style="color: var(--primary-teal); font-size: 1.5rem;"></i>
+                        <span class="label">גודל חבילה</span>
+                        <span class="value">{{ (mission?.packageSize ?? 0) | packageSize }}</span>
+                    </div>
+                    <div class="info-card">
+                        <i class="bi bi-calendar-event text-warning mb-2" style="font-size: 1.5rem;"></i>
+                        <span class="label">פורסם</span>
+                        <span class="value">{{ (mission?.creationTime ? mission!.creationTime + 'Z' : '') |
+                            date:'dd/MM/yy HH:mm' }}</span>
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div class="description-box mb-4">
+                    <h6>תיאור החבילה</h6>
+                    <p>{{ mission?.packageDescription || 'ללא תיאור נוסף' }}</p>
+                </div>
+
+                <!-- User Profile (Compact) -->
+                <div class="creator-profile d-flex align-items-center bg-light rounded-3 p-2">
+                    <div class="avatar-circle ms-3">
+                        {{ mission?.creatorName?.charAt(0) || '?' }}
+                    </div>
+                    <div class="d-flex flex-column">
+                        <span class="small text-muted">פורסם ע"י</span>
+                        <span class="fw-bold">{{ mission?.creatorName || 'משתמש אנונימי' }}</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Footer Actions -->
+            <div class="modal-footer p-4 pt-0 border-0">
+                @if (hasAlreadyRequested) {
+                <button class="btn btn-secondary w-100 py-3 rounded-pill disabled-btn" disabled>
+                    <i class="bi bi-check-circle-fill ms-2"></i> הבקשה נשלחה
+                </button>
+                } @else {
+                <button type="button" class="btn btn-primary w-100 py-3 rounded-pill shadow-lg hover-lift"
+                    (click)="request.emit()" [disabled]="isRequesting">
+                    @if (isRequesting) {
+                    <span class="spinner-border spinner-border-sm ms-2" role="status" aria-hidden="true"></span>
+                    שולח בקשה...
+                    } @else {
+                    שלח בקשה למשלוח
+                    }
+                </button>
+                }
+            </div>
+
+        </div>
+    </div>
+</div>
+}

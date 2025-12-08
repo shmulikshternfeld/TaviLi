@@ -8,6 +8,9 @@ using TaviLi.Application.Features.Missions.Commands.AcceptMission;
 using TaviLi.Application.Features.Missions.Queries.GetMyCreatedMissions;
 using TaviLi.Application.Features.Missions.Queries.GetMyAssignedMissions;
 using TaviLi.Application.Features.Missions.Commands.UpdateStatus;
+using TaviLi.Application.Features.Missions.Commands.CreateMissionRequest;
+using TaviLi.Application.Features.Missions.Commands.ApproveMissionRequest;
+using TaviLi.Application.Features.Missions.Queries.GetMissionRequests;
 
 namespace TaviLi.Api.Controllers
 {
@@ -104,6 +107,46 @@ namespace TaviLi.Api.Controllers
             {
                 return Forbid(ex.Message); // מחזיר 403 Forbidden
             }
+        }
+
+        // POST api/missions/{id}/request
+        [HttpPost("{id}/request")]
+        [Authorize(Roles = "Courier")]
+        public async Task<ActionResult<int>> RequestMission(int id)
+        {
+            var command = new CreateMissionRequestCommand { MissionId = id };
+            try
+            {
+                var result = await _mediator.Send(command);
+                return Ok(result);
+            }
+            catch (KeyNotFoundException) { return NotFound(); }
+            catch (InvalidOperationException ex) { return BadRequest(new { message = ex.Message }); }
+        }
+
+        // GET api/missions/{id}/requests
+        [HttpGet("{id}/requests")]
+        [Authorize(Roles = "Client")]
+        public async Task<ActionResult<List<MissionRequestDto>>> GetRequests(int id)
+        {
+            var query = new GetMissionRequestsQuery { MissionId = id };
+            var result = await _mediator.Send(query);
+            return Ok(result);
+        }
+
+        // POST api/missions/requests/{id}/approve
+        [HttpPost("requests/{id}/approve")]
+        [Authorize(Roles = "Client")]
+        public async Task<ActionResult> ApproveRequest(int id)
+        {
+            var command = new ApproveMissionRequestCommand { RequestId = id };
+            try
+            {
+                await _mediator.Send(command);
+                return Ok();
+            }
+            catch (KeyNotFoundException) { return NotFound(); }
+            catch (UnauthorizedAccessException) { return Forbid(); }
         }
     }
 }

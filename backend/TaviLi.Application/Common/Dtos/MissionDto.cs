@@ -12,6 +12,7 @@ namespace TaviLi.Application.Common.Dtos
         public decimal OfferedPrice { get; set; }
         public MissionStatus Status { get; set; }
         public DateTime CreationTime { get; set; }
-        public string? CreatorName { get; set; } // נחמד להחזיר גם את שם היוצר
+        public string? CreatorName { get; set; }
+        public MissionRequestStatus? MyRequestStatus { get; set; } // סטטוס הבקשה שלי
     }
 }

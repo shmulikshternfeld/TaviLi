@@ -23,6 +23,7 @@ namespace TaviLi.Application.Features.Missions.Queries.GetMyCreatedMissions
             // אנו מסננים לפי CreatorUserId
             var missions = await _context.Missions
                 .Include(m => m.CreatorUser)
+                .Include(m => m.Requests) // Load Requests
                 .Where(m => m.CreatorUserId == userId)
                 .OrderByDescending(m => m.CreationTime)
                 .ToListAsync(cancellationToken);
@@ -33,12 +34,14 @@ namespace TaviLi.Application.Features.Missions.Queries.GetMyCreatedMissions
                 Id = m.Id,
                 PickupAddress = m.PickupAddress,
                 DropoffAddress = m.DropoffAddress,
+                PackageDescription = m.PackageDescription,
                 PackageSize = m.PackageSize,
                 OfferedPrice = m.OfferedPrice,
                 Status = m.Status,
                 CreationTime = m.CreationTime,
                 CreatorName = m.CreatorUser?.Name ?? m.CreatorUser?.Email,
-                CreatorUserId = m.CreatorUserId
+                CreatorUserId = m.CreatorUserId,
+                PendingRequestsCount = m.Requests.Count(r => r.Status == TaviLi.Domain.Enums.MissionRequestStatus.Pending)
             }).ToList();
         }
     }

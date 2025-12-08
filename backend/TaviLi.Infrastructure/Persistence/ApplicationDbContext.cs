@@ -12,6 +12,7 @@ namespace TaviLi.Infrastructure.Persistence
     {
         // מגדיר את הטבלה 'Missions' בבסיס הנתונים
         public DbSet<Mission> Missions { get; set; }
+        public DbSet<MissionRequest> MissionRequests { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -42,8 +43,6 @@ namespace TaviLi.Infrastructure.Persistence
                     .WithMany(u => u.AssignedMissions)
                     .HasForeignKey(m => m.CourierUserId)
                     .OnDelete(DeleteBehavior.SetNull); // אם שליח נמחק, המשימה חוזרת ל-null
-
-                
             });
         }
     }

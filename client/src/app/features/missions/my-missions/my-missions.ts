@@ -2,7 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MissionService } from '../../../core/services/mission.service';
 import { NotificationService } from '../../../core/services/notification.service';
-import { Mission, MissionStatus } from '../../../core/models/mission.model';
+import { Mission, MissionStatus, MissionRequestStatus } from '../../../core/models/mission.model';
 import { MissionStatusPipe } from '../../../shared/pipes/mission-status.pipe';
 import { PackageSizePipe } from '../../../shared/pipes/package-size.pipe';
 
@@ -19,9 +19,10 @@ export class MyMissions implements OnInit {
 
   missions = signal<Mission[]>([]);
   isLoading = signal<boolean>(true);
-  
+
   // כדי להשתמש ב-Enum ב-HTML
-  MissionStatus = MissionStatus; 
+  MissionStatus = MissionStatus;
+  MissionRequestStatus = MissionRequestStatus;
 
   ngOnInit(): void {
     this.loadMissions();

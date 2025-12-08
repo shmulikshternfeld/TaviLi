@@ -6,6 +6,7 @@ namespace TaviLi.Application.Common.Interfaces
     public interface IApplicationDbContext
     {
         DbSet<Mission> Missions { get; }
+        DbSet<MissionRequest> MissionRequests { get; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }

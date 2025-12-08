@@ -1,49 +1,35 @@
 <div class="container mt-5 mb-5">
   <div class="row justify-content-center">
     <div class="col-md-6 col-lg-5">
-      
+
       <div class="text-center mb-4">
+        <div class="d-inline-flex align-items-center justify-content-center bg-white shadow-sm rounded-circle p-3 mb-3">
+          <i class="bi bi-box-seam-fill" style="font-size: 2rem; color: var(--primary-teal);"></i>
+        </div>
         <h4 class="fw-bold text-dark">הצטרפות ל-TaviLi</h4>
         <p class="text-muted">קהילת השליחויות החברתית של ישראל</p>
       </div>
 
       <div class="auth-card">
         <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-          
+
           <div class="mb-3">
             <label for="name" class="form-label">שם מלא</label>
-            <input 
-              type="text" 
-              id="name" 
-              class="form-control" 
-              formControlName="name"
-              placeholder="ישראל ישראלי"
-              [class.is-invalid]="registerForm.get('name')?.invalid && registerForm.get('name')?.touched"
-            >
+            <input type="text" id="name" class="form-control" formControlName="name" placeholder="ישראל ישראלי"
+              [class.is-invalid]="registerForm.get('name')?.invalid && registerForm.get('name')?.touched">
           </div>
 
           <div class="mb-3">
             <label for="email" class="form-label">אימייל</label>
-            <input 
-              type="email" 
-              id="email" 
-              class="form-control" 
-              formControlName="email"
-              placeholder="name@example.com"
-              [class.is-invalid]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched"
-            >
+            <input type="email" id="email" class="form-control" formControlName="email" placeholder="name@example.com"
+              [class.is-invalid]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched">
           </div>
 
           <div class="mb-4">
             <label for="password" class="form-label">סיסמה</label>
-            <input 
-              type="password" 
-              id="password" 
-              class="form-control" 
-              formControlName="password"
+            <input type="password" id="password" class="form-control" formControlName="password"
               placeholder="לפחות 4 תווים"
-              [class.is-invalid]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched"
-            >
+              [class.is-invalid]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched">
           </div>
 
           <div class="mb-4 bg-light p-3 rounded-3 border border-light">
@@ -67,15 +53,16 @@
           </div>
 
           @if (errorMessage) {
-            <div class="alert alert-danger text-center py-2 fs-6" role="alert">
-              {{ errorMessage }}
-            </div>
+          <div class="alert alert-danger text-center py-2 fs-6" role="alert">
+            {{ errorMessage }}
+          </div>
           }
 
           <div class="d-grid">
-            <button type="submit" class="btn btn-primary py-2 shadow-sm" [disabled]="registerForm.invalid || isSubmitting">
+            <button type="submit" class="btn btn-primary py-2 shadow-sm"
+              [disabled]="registerForm.invalid || isSubmitting">
               @if (isSubmitting) {
-                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
               }
               צור חשבון
             </button>

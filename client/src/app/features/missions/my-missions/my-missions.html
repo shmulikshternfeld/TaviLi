@@ -2,7 +2,7 @@
   <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
       <h2 class="mb-1">המשלוחים שלי</h2>
-      <p class="text-muted mb-0">נהל את המשימות שלקחת ועדכן התקדמות</p>
+      <p class="text-muted mb-0">נהל את המשימות שלקחת וצפה בסטטוס בקשות</p>
     </div>
   </div>
 
@@ -19,7 +19,7 @@
       <thead class="table-light">
         <tr>
           <th scope="col" class="ps-4">מזהה</th>
-          <th scope="col">סטטוס נוכחי</th>
+          <th scope="col">סטטוס משלוח / בקשה</th>
           <th scope="col">פרטי מסלול</th>
           <th scope="col">שכר (₪)</th>
           <th scope="col" class="text-end pe-4">פעולה הבאה</th>
@@ -31,14 +31,28 @@
           <td class="ps-4 fw-bold">#{{ mission.id }}</td>
 
           <td>
+            <!-- Request Status Badges -->
+            @if (mission.myRequestStatus !== undefined && mission.myRequestStatus !== MissionRequestStatus.Approved) {
+            @if (mission.myRequestStatus === MissionRequestStatus.Pending) {
+            <span class="badge rounded-pill bg-light text-dark border">
+              <i class="bi bi-hourglass-split me-1"></i> הבקשה בבדיקה
+            </span>
+            } @else if (mission.myRequestStatus === MissionRequestStatus.Rejected) {
+            <span class="badge rounded-pill bg-danger-subtle text-danger">
+              <i class="bi bi-x-circle me-1"></i> הבקשה נדחתה
+            </span>
+            }
+            } @else {
+            <!-- Standard Mission Status -->
             <span class="badge rounded-pill px-3 py-2" [ngClass]="{
-                    'bg-info': mission.status === MissionStatus.Accepted,
-                    'bg-warning text-dark': mission.status === MissionStatus.InProgress_Pickup || mission.status === MissionStatus.InProgress_Delivery,
-                    'bg-primary': mission.status === MissionStatus.Collected,
-                    'bg-success': mission.status === MissionStatus.Completed
-                  }">
+                        'bg-info': mission.status === MissionStatus.Accepted,
+                        'bg-warning text-dark': mission.status === MissionStatus.InProgress_Pickup || mission.status === MissionStatus.InProgress_Delivery,
+                        'bg-primary': mission.status === MissionStatus.Collected,
+                        'bg-success': mission.status === MissionStatus.Completed
+                    }">
               {{ mission.status | missionStatus }}
             </span>
+            }
           </td>
 
           <td>
@@ -54,6 +68,12 @@
           </td>
 
           <td class="text-end pe-4">
+            @if (mission.myRequestStatus === MissionRequestStatus.Pending) {
+            <button class="btn btn-light btn-sm disabled" disabled>ממתין לאישור...</button>
+            } @else if (mission.myRequestStatus === MissionRequestStatus.Rejected) {
+            <span class="text-muted small">לא רלוונטי</span>
+            } @else {
+            <!-- Active Mission Actions -->
             @switch (mission.status) {
             @case (MissionStatus.Accepted) {
             <button class="btn btn-primary btn-sm" (click)="advanceStatus(mission)">
@@ -79,6 +99,7 @@
             <span class="text-muted"><i class="bi bi-check-all"></i> הושלם</span>
             }
             }
+            }
           </td>
         </tr>
         }
@@ -101,14 +122,23 @@
     @for (mission of missions(); track mission.id) {
     <div class="mission-card-mobile">
       <div class="d-flex justify-content-between align-items-center mb-3">
+        <!-- Badge Logic Mobile -->
+        @if (mission.myRequestStatus !== undefined && mission.myRequestStatus !== MissionRequestStatus.Approved) {
+        @if (mission.myRequestStatus === MissionRequestStatus.Pending) {
+        <span class="badge rounded-pill bg-light text-dark border">בבדיקה</span>
+        } @else if (mission.myRequestStatus === MissionRequestStatus.Rejected) {
+        <span class="badge rounded-pill bg-danger-subtle text-danger">נדחה</span>
+        }
+        } @else {
         <span class="badge rounded-pill px-3 py-2" [ngClass]="{
-                    'bg-info': mission.status === MissionStatus.Accepted,
-                    'bg-warning text-dark': mission.status === MissionStatus.InProgress_Pickup || mission.status === MissionStatus.InProgress_Delivery,
-                    'bg-primary': mission.status === MissionStatus.Collected,
-                    'bg-success': mission.status === MissionStatus.Completed
-                  }">
+                        'bg-info': mission.status === MissionStatus.Accepted,
+                        'bg-warning text-dark': mission.status === MissionStatus.InProgress_Pickup || mission.status === MissionStatus.InProgress_Delivery,
+                        'bg-primary': mission.status === MissionStatus.Collected,
+                        'bg-success': mission.status === MissionStatus.Completed
+                    }">
           {{ mission.status | missionStatus }}
         </span>
+        }
         <span class="price-tag">{{ mission.offeredPrice }} ₪</span>
       </div>
 
@@ -128,6 +158,11 @@
       <div class="d-flex justify-content-between align-items-center pt-3 border-top">
         <span class="small text-muted">#{{ mission.id }} • {{ mission.packageSize | packageSize }}</span>
 
+        @if (mission.myRequestStatus === MissionRequestStatus.Pending) {
+        <button class="btn btn-light btn-sm flex-grow-1 ms-3" disabled>ממתין לאישור...</button>
+        } @else if (mission.myRequestStatus === MissionRequestStatus.Rejected) {
+        <!-- Nothing -->
+        } @else {
         @switch (mission.status) {
         @case (MissionStatus.Accepted) {
         <button class="btn btn-primary btn-sm flex-grow-1 ms-3" (click)="advanceStatus(mission)">
@@ -151,6 +186,7 @@
         }
         @case (MissionStatus.Completed) {
         <span class="text-muted"><i class="bi bi-check-all"></i> הושלם</span>
+        }
         }
         }
       </div>

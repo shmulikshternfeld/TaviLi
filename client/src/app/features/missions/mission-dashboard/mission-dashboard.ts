@@ -7,13 +7,14 @@ import { Mission, PackageSize } from '../../../core/models/mission.model';
 import { PackageSizePipe } from '../../../shared/pipes/package-size.pipe';
 import { NotificationService } from '../../../core/services/notification.service';
 import { MissionFilterComponent, FilterState } from '../components/mission-filter/mission-filter';
+import { MissionDetailsModalComponent } from '../components/mission-details-modal/mission-details-modal';
 
 @Component({
   selector: 'app-mission-dashboard',
   templateUrl: './mission-dashboard.html',
   styleUrl: './mission-dashboard.scss',
   standalone: true,
-  imports: [CommonModule, PackageSizePipe, MissionFilterComponent]
+  imports: [CommonModule, PackageSizePipe, MissionFilterComponent, MissionDetailsModalComponent]
 })
 export class MissionDashboard implements OnInit {
   private missionService = inject(MissionService);
@@ -21,13 +22,13 @@ export class MissionDashboard implements OnInit {
   private router = inject(Router);
   private notify = inject(NotificationService);
 
-  // נתונים מהשרת
+  // Server Data
   private allFetchedMissions = signal<Mission[]>([]);
 
-  // פילטרים נוכחיים
+  // Filters
   private currentPackageSizeFilter = signal<string | PackageSize>('All');
 
-  // נתונים לתצוגה (אחרי סינון קליינט)
+  // Display Data
   missions = computed(() => {
     const sizeFilter = this.currentPackageSizeFilter();
     const all = this.allFetchedMissions();
@@ -39,15 +40,18 @@ export class MissionDashboard implements OnInit {
   isLoading = signal<boolean>(true);
   busyMissionId = signal<number | null>(null);
 
+  // Modal State
+  selectedMission = signal<Mission | null>(null);
+  isRequesting = signal<boolean>(false);
+  hasAlreadyRequested = signal<boolean>(false);
+
   ngOnInit(): void {
     this.loadMissions();
   }
 
-  // שליפה מהשרת עם סינון ערים
   loadMissions(filters?: { relatedCity?: string, pickupCity?: string, dropoffCity?: string }): void {
     this.isLoading.set(true);
 
-    // המרת הפילטר שלנו לפורמט של הסרוויס
     const serviceFilters: any = {};
     if (filters?.relatedCity) serviceFilters.relatedCity = filters.relatedCity;
     if (filters?.pickupCity) serviceFilters.pickupCity = filters.pickupCity;
@@ -66,10 +70,7 @@ export class MissionDashboard implements OnInit {
   }
 
   onFilterChange(event: FilterState) {
-    // 1. עדכון פילטר גודל חבילה (לקוח)
     this.currentPackageSizeFilter.set(event.packageSize);
-
-    // 2. שליפה מחדש עם הפילטרים המעודכנים (שרת)
     this.loadMissions({
       relatedCity: event.relatedCity,
       pickupCity: event.pickupCity,
@@ -90,49 +91,60 @@ export class MissionDashboard implements OnInit {
     }
   }
 
-  async onAcceptMissionClick(mission: Mission): Promise<void> {
-    // 1. בדיקת התחברות
+  onDetailsClick(mission: Mission): void {
+    this.selectedMission.set(mission);
+    this.hasAlreadyRequested.set(false);
+    // Ideally we verify if user requested it, but we'll handle existing request error on click
+  }
+
+  closeModal(): void {
+    this.selectedMission.set(null);
+  }
+
+  onRequestMission(): void {
+    const mission = this.selectedMission();
+    if (!mission) return;
+
+    // 1. Check Login
     if (!this.authService.isLoggedIn()) {
-      this.notify.error('התחברות נדרשת', 'עליך להתחבר למערכת כדי לקבל משלוחים');
+      this.notify.error('התחברות נדרשת', 'עליך להתחבר למערכת כדי לבקש משלוחים');
       this.router.navigate(['/auth/login']);
+      this.closeModal();
       return;
     }
 
-    // 2. בדיקת תפקיד
+    // 2. Check Role
     if (!this.authService.hasRole('Courier')) {
       this.notify.error('חסרה הרשאה', 'רק משתמשים הרשומים כשליחים יכולים לקבל משימות.');
       return;
     }
 
-    // 3. בדיקת "משלוח עצמי"
+    // 3. Check Self-Request
     const currentUserId = this.authService.currentUser()?.id;
     if (mission.creatorUserId === currentUserId) {
       this.notify.error('פעולה לא חוקית', 'לא ניתן לקבל משלוח שאתה יצרת בעצמך 😅');
       return;
     }
 
-    // 4. אישור המשתמש
-    const confirmed = await this.notify.confirm(
-      'קבלת משלוח',
-      `האם אתה בטוח שברצונך לקחת את המשלוח מ-${mission.pickupAddress}?`
-    );
+    // 4. Execute
+    this.isRequesting.set(true);
 
-    if (!confirmed) return;
-
-    // 5. ביצוע הפעולה
-    this.busyMissionId.set(mission.id);
-
-    this.missionService.acceptMission(mission.id).subscribe({
-      next: () => {
-        this.notify.success('המשלוח שויך אליך בהצלחה! 🚀');
-        this.loadMissions();
-        this.busyMissionId.set(null);
+    this.missionService.requestMission(mission.id).subscribe({
+      next: (requestId) => {
+        this.notify.success('הבקשה נשלחה בהצלחה! 🚀');
+        this.hasAlreadyRequested.set(true);
+        this.isRequesting.set(false);
+        setTimeout(() => this.closeModal(), 2000);
       },
       error: (err) => {
         console.error(err);
-        this.notify.error('אופס...', 'אירעה שגיאה בקבלת המשלוח. ייתכן שהוא כבר נתפס.');
-        this.busyMissionId.set(null);
-        this.loadMissions();
+        this.isRequesting.set(false);
+        if (err.error?.message?.includes("Already requested") || err.status === 400) {
+          this.hasAlreadyRequested.set(true);
+          this.notify.error('כבר ביקשת', 'כבר שלחת בקשה למשלוח זה.');
+        } else {
+          this.notify.error('אופס...', 'אירעה שגיאה בשליחת הבקשה.');
+        }
       }
     });
   }

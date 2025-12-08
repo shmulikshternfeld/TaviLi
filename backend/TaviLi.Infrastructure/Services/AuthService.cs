@@ -26,8 +26,8 @@ namespace TaviLi.Infrastructure.Services
             var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id), // מזהה ייחודי של המשתמש
-                new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                new Claim(JwtRegisteredClaimNames.Name, user.Name),
+                new Claim(JwtRegisteredClaimNames.Email, user.Email ?? string.Empty),
+                new Claim(JwtRegisteredClaimNames.Name, user.Name ?? string.Empty),
                 // נוסיף כל תפקיד כ-Claim נפרד
             };
 
