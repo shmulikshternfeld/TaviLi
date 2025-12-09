@@ -54,6 +54,7 @@ namespace TaviLi.Application.Features.Missions.Queries.GetOpenMissions
                 Id = m.Id,
                 PickupAddress = m.PickupAddress,
                 DropoffAddress = m.DropoffAddress,
+                PackageDescription = m.PackageDescription,
                 PackageSize = m.PackageSize,
                 OfferedPrice = m.OfferedPrice,
                 Status = m.Status,

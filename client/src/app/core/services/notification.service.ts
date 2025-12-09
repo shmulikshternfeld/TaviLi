@@ -25,6 +25,19 @@ export class NotificationService {
     });
   }
 
+  // הודעת מידע (Toast קטן בצד)
+  info(message: string): void {
+    Swal.fire({
+      icon: 'info',
+      title: message,
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true
+    });
+  }
+
   // הודעת שגיאה (Modal במרכז)
   error(title: string, text?: string): void {
     Swal.fire({

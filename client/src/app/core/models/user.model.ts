@@ -3,6 +3,7 @@ export interface UserProfile {
   email: string;
   name: string;
   profileImageUrl?: string;
+  phoneNumber?: string;
   roles: string[];
 }
 

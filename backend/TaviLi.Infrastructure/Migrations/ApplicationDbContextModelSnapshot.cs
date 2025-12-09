@@ -168,6 +168,34 @@ namespace TaviLi.Infrastructure.Migrations
                     b.ToTable("Missions");
                 });
 
+            modelBuilder.Entity("TaviLi.Domain.Entities.MissionRequest", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("CourierId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("MissionId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("RequestTime")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CourierId");
+
+                    b.HasIndex("MissionId");
+
+                    b.ToTable("MissionRequests");
+                });
+
             modelBuilder.Entity("TaviLi.Domain.Entities.Role", b =>
                 {
                     b.Property<string>("Id")
@@ -332,6 +360,30 @@ namespace TaviLi.Infrastructure.Migrations
                     b.Navigation("CourierUser");
 
                     b.Navigation("CreatorUser");
+                });
+
+            modelBuilder.Entity("TaviLi.Domain.Entities.MissionRequest", b =>
+                {
+                    b.HasOne("TaviLi.Domain.Entities.User", "Courier")
+                        .WithMany()
+                        .HasForeignKey("CourierId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TaviLi.Domain.Entities.Mission", "Mission")
+                        .WithMany("Requests")
+                        .HasForeignKey("MissionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Courier");
+
+                    b.Navigation("Mission");
+                });
+
+            modelBuilder.Entity("TaviLi.Domain.Entities.Mission", b =>
+                {
+                    b.Navigation("Requests");
                 });
 
             modelBuilder.Entity("TaviLi.Domain.Entities.User", b =>

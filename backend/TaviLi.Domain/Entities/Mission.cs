@@ -24,5 +24,7 @@ namespace TaviLi.Domain.Entities
         // --- סטטוס וזמנים ---
         public MissionStatus Status { get; set; } 
         public DateTime CreationTime { get; set; } 
+
+        public virtual ICollection<MissionRequest> Requests { get; set; } = new List<MissionRequest>();
     }
 }
