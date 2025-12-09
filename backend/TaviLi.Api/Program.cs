@@ -86,6 +86,10 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
     try
     {
+        // ** ADDED: Force database migration (table creation) here **
+        var context = services.GetRequiredService<ApplicationDbContext>();
+        await context.Database.MigrateAsync();
+        
         var roleManager = services.GetRequiredService<RoleManager<Role>>();
         await ApplicationDbContextSeed.SeedRolesAsync(roleManager);
     }

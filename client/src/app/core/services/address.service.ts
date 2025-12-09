@@ -2,37 +2,48 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AddressService {
   private http = inject(HttpClient);
-  
-  // Nominatim Search Endpoint
-  private readonly BASE_URL = 'https://nominatim.openstreetmap.org/search';
+
+  // Geoapify Autocomplete Endpoint
+  private readonly BASE_URL = 'https://api.geoapify.com/v1/geocode/autocomplete';
 
   constructor() { }
 
   searchAddress(query: string): Observable<string[]> {
-    // Basic validation: wait for at least 3 characters
     if (!query || query.length < 3) return of([]);
 
-    // Nominatim parameters
-    // format=json: get JSON response
-    // addressdetails=1: get broken down address parts
-    // limit=5: only 5 results
-    // countrycodes=il: Limit to Israel
-    const url = `${this.BASE_URL}?q=${encodeURIComponent(query)}&format=json&addressdetails=1&limit=5&countrycodes=il`;
+    // Use the key from environment or fallback (though it won't work without a valid key)
+    // @ts-ignore
+    const apiKey = environment.geoapifyApiKey || '';
 
-    return this.http.get<any[]>(url).pipe(
-      map(results => {
-        // Map the results to a simple array of display names
-        return results.map(item => item.display_name);
+    if (!apiKey) {
+      console.warn('Geoapify API Key is missing in environment.ts');
+      return of([]);
+    }
+
+    // Geoapify parameters
+    // text: the query
+    // apiKey: your key
+    // limit: number of results
+    // format: json
+    const url = `${this.BASE_URL}?text=${encodeURIComponent(query)}&limit=5&format=json&apiKey=${apiKey}`;
+
+    return this.http.get<any>(url).pipe(
+      map(response => {
+        // Geoapify returns { results: [...] }
+        if (!response.results) return [];
+
+        // Map to formatted address
+        return response.results.map((item: any) => item.formatted);
       }),
       catchError(error => {
-        console.error('Nominatim API Error:', error);
-        // Return empty array on error so the app doesn't crash
+        console.error('Geoapify API Error:', error);
         return of([]);
       })
     );
