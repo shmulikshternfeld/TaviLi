@@ -25,11 +25,11 @@ builder.Services.AddCors(options =>
                    .AllowAnyMethod();
         });
 });
-//  חיבור לבסיס הנתונים (SQLite)
+//  חיבור לבסיס הנתונים (PostgreSQL)
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite(connectionString));
+    options.UseNpgsql(connectionString));
 builder.Services.AddScoped<TaviLi.Application.Common.Interfaces.IApplicationDbContext>(provider => 
     provider.GetRequiredService<ApplicationDbContext>());
     
