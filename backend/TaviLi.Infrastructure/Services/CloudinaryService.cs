@@ -22,10 +22,10 @@ namespace TaviLi.Infrastructure.Services
         {
             if (_cloudinary != null) return _cloudinary;
 
-            // Try to get keys from "Cloudinary" section first, then fall back to root
-            var cloudName = _configuration["Cloudinary:CloudName"] ?? _configuration["CloudName"];
-            var apiKey = _configuration["Cloudinary:ApiKey"] ?? _configuration["ApiKey"];
-            var apiSecret = _configuration["Cloudinary:ApiSecret"] ?? _configuration["ApiSecret"];
+            // קריאת המפתחות לפי השמות שהוגדרו בשרת (CloudinarySettings__...)
+            var cloudName = _configuration["CloudinarySettings:CloudName"];
+            var apiKey = _configuration["CloudinarySettings:ApiKey"];
+            var apiSecret = _configuration["CloudinarySettings:ApiSecret"];
 
             if (string.IsNullOrEmpty(cloudName) || string.IsNullOrEmpty(apiKey) || string.IsNullOrEmpty(apiSecret))
             {

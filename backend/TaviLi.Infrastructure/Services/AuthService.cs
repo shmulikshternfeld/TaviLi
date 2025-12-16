@@ -38,7 +38,7 @@ namespace TaviLi.Infrastructure.Services
 
             // [2] הגדרת מפתח החתימה
             // נקרא את המפתח הסודי מההגדרות (appsettings)
-            var jwtKey = _configuration["Jwt:Key"] ?? "THIS_IS_A_DEFAULT_DEV_KEY_REPLACE_IT";
+            var jwtKey = _configuration["Jwt:Key"] ?? throw new InvalidOperationException("JWT Key not found in configuration.");
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 

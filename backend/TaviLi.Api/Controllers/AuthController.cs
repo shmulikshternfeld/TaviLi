@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using TaviLi.Application.Common.Dtos;
 using TaviLi.Application.Features.Auth.Commands.Register;
 using TaviLi.Application.Features.Auth.Queries.Login;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace TaviLi.Api.Controllers
 {
@@ -20,6 +21,7 @@ namespace TaviLi.Api.Controllers
 
         // POST api/auth/register
         [HttpPost("register")]
+        [EnableRateLimiting("Registration")]
         public async Task<ActionResult<AuthResponseDto>> Register(RegisterCommand command)
         {
             // שולחים את הפקודה למטפל שלה ומחזירים את התוצאה
@@ -31,16 +33,8 @@ namespace TaviLi.Api.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<AuthResponseDto>> Login(LoginQuery query)
         {
-        try
-        {
             var response = await _mediator.Send(query);
             return Ok(response);
         }
-        catch (UnauthorizedAccessException ex)
-        {
-        // טיפול שגיאה זמני עד שנבנה Middleware
-        return Unauthorized(new { message = ex.Message }); 
-        }
-       }
     }
 }

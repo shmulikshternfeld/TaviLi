@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using TaviLi.Domain.Entities;
 using TaviLi.Infrastructure.Persistence;
+using Microsoft.AspNetCore.RateLimiting;
+using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,15 +17,33 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers(); 
 
 //  הגדרת CORS כדי לאפשר לאנגולר לתקשר עם ה-API
-builder.Services.AddCors(options =>
+    //  הגדרת CORS כדי לאפשר לאנגולר לתקשר עם ה-API
+    //  הגדרת CORS דינמית
+    var allowedOrigins = builder.Configuration["AllowedOrigins"]?
+        .Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries) 
+        ?? Array.Empty<string>();
+
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("ProductionCors",
+            policy =>
+            {
+                policy.WithOrigins(allowedOrigins)
+                      .AllowAnyHeader()
+                      .AllowAnyMethod();
+            });
+    });
+
+// Rate Limiting
+builder.Services.AddRateLimiter(options =>
 {
-    options.AddPolicy("AllowAngularDev",
-        builder =>
-        {
-            builder.WithOrigins("http://localhost:4200") // הכתובת של האנגולר
-                   .AllowAnyHeader()
-                   .AllowAnyMethod();
-        });
+    options.AddFixedWindowLimiter("Registration", opt =>
+    {
+        opt.Window = TimeSpan.FromMinutes(1);
+        opt.PermitLimit = 5; // מקסימום 5 נסיונות בדקה
+        opt.QueueLimit = 0;
+        opt.QueueProcessingOrder = System.Threading.RateLimiting.QueueProcessingOrder.OldestFirst;
+    });
 });
 //  חיבור לבסיס הנתונים (PostgreSQL)
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
@@ -36,12 +56,19 @@ builder.Services.AddScoped<TaviLi.Application.Common.Interfaces.IApplicationDbCo
 //  הגדרת Identity
 builder.Services.AddIdentity<User, Role>(options =>
 {
+    // מדיניות סיסמאות
     options.Password.RequireDigit = false;
-    options.Password.RequiredLength = 4;
+    options.Password.RequiredLength = 8; // מינימום 8 תווים
     options.Password.RequireNonAlphanumeric = false;
     options.Password.RequireUppercase = false;
     options.Password.RequireLowercase = false;
+
+    // מנגנון נעילה (Lockout)
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5); // נעילה ל-5 דקות
+    options.Lockout.MaxFailedAccessAttempts = 10; // אחרי 10 כישלונות
+    options.Lockout.AllowedForNewUsers = true;
 })
+.AddPasswordValidator<TaviLi.Infrastructure.Identity.PasswordLetterValidator<User>>() // ולידטור מותאם אישית (לפחות אות אחת)
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
 
@@ -99,10 +126,16 @@ using (var scope = app.Services.CreateScope())
 
 // --- 3. הגדרת הצינור (Pipeline) ---
 
+// שימוש ב-Middleware לטיפול בשגיאות (חייב להיות ראשון)
+app.UseMiddleware<TaviLi.Infrastructure.Middleware.ExceptionMiddleware>();
+
 app.UseHttpsRedirection();
 
+// הפעלת Rate Limiting
+app.UseRateLimiter();
+
 //  הפעלת CORS
-app.UseCors("AllowAngularDev");
+app.UseCors("ProductionCors");
 
 //  הפעלת מערכת האימות וההרשאות
 app.UseAuthentication();
