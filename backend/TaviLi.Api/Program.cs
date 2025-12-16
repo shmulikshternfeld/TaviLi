@@ -144,4 +144,14 @@ app.UseAuthorization();
 // מיפוי ה-Controllers 
 app.MapControllers();
 
+// 1. נתיב קליל ל-Render (ללא קריאה לדאטה בייס)
+app.MapGet("/ping", () => Results.Ok("Pong"));
+
+// 2. נתיב כבד ל-Supabase (מבצע שאילתה כדי למנוע הקפאה)
+app.MapGet("/db-ping", async (TaviLi.Infrastructure.Persistence.ApplicationDbContext db) =>
+{
+    var canConnect = await db.Database.CanConnectAsync();
+    return canConnect ? Results.Ok("DB Active") : Results.Problem("DB Down");
+});
+
 app.Run();

@@ -1,0 +1,13 @@
+name: Render Keep-Alive (Light)
+
+on:
+  schedule:
+    - cron: '*/10 * * * *' # כל 10 דקות
+  workflow_dispatch:
+
+jobs:
+  ping-render:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Render Only
+        run: curl -I https://tavili-api.onrender.com/ping

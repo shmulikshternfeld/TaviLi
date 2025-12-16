@@ -1,0 +1,13 @@
+name: Supabase Keep-Alive (DB Query)
+
+on:
+  schedule:
+    - cron: '0 0 */2 * *' # פעם ביומיים בחצות
+  workflow_dispatch:
+
+jobs:
+  ping-db:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Database
+        run: curl -I https://tavili-api.onrender.com/db-ping
