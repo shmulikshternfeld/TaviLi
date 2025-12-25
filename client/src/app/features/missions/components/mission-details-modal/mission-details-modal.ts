@@ -1,12 +1,13 @@
 import { Component, EventEmitter, Input, Output, OnChanges, SimpleChanges, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { Mission, PackageSize } from '../../../../core/models/mission.model';
 import { PackageSizePipe } from '../../../../shared/pipes/package-size.pipe';
 
 @Component({
     selector: 'app-mission-details-modal',
     standalone: true,
-    imports: [CommonModule, PackageSizePipe],
+    imports: [CommonModule, PackageSizePipe, RouterModule],
     templateUrl: './mission-details-modal.html',
     styleUrls: ['./mission-details-modal.scss']
 })

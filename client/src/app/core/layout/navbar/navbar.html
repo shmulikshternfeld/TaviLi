@@ -12,7 +12,7 @@
 
         <!-- MOBILE: User Avatar -->
         @if (authService.isLoggedIn()) {
-        <div class="d-lg-none avatar-circle-sm" (click)="toggleUserMenu()">
+        <div class="d-lg-none avatar-circle-sm" routerLink="/profile">
           @if (authService.currentUser()?.profileImageUrl) {
           <img [src]="authService.currentUser()?.profileImageUrl" class="w-100 h-100 rounded-circle object-fit-cover">
           } @else {
