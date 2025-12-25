@@ -43,7 +43,7 @@ namespace TaviLi.Application.Features.Reviews.Commands.CreateReview
 
         public async Task<int> Handle(CreateReviewCommand request, CancellationToken cancellationToken)
         {
-            var userId = _currentUserService.UserId;
+            var userId = _currentUserService.GetUserId();
             if (userId == null) throw new UnauthorizedAccessException();
 
             var mission = await _context.Missions

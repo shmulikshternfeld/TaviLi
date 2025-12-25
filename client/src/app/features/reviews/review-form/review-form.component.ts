@@ -6,10 +6,10 @@ import { ReviewService } from '../../../core/services/review.service';
 import { finalize } from 'rxjs/operators';
 
 @Component({
-    selector: 'app-review-form',
-    standalone: true,
-    imports: [CommonModule, ReactiveFormsModule],
-    template: `
+  selector: 'app-review-form',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule],
+  template: `
     <div class="modal-header border-0 pb-0">
       <h5 class="modal-title fw-bold">דרג את השליח</h5>
       <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss()"></button>
@@ -51,7 +51,7 @@ import { finalize } from 'rxjs/operators';
       </form>
     </div>
   `,
-    styles: [`
+  styles: [`
     .text-warning { color: #FFC107 !important; }
     .cursor-pointer { cursor: pointer; }
     .transition-all { transition: all 0.2s ease; }
@@ -59,52 +59,52 @@ import { finalize } from 'rxjs/operators';
   `]
 })
 export class ReviewFormComponent {
-    activeModal = inject(NgbActiveModal);
-    private fb = inject(FormBuilder);
-    private reviewService = inject(ReviewService);
+  activeModal = inject(NgbActiveModal);
+  private fb = inject(FormBuilder);
+  private reviewService = inject(ReviewService);
 
-    @Input() missionId!: number;
-    @Output() reviewSubmitted = new EventEmitter<void>();
+  @Input() missionId!: number;
+  @Output() reviewSubmitted = new EventEmitter<void>();
 
-    reviewForm: FormGroup;
-    stars = [1, 2, 3, 4, 5];
-    isSubmitting = false;
+  reviewForm: FormGroup;
+  stars = [1, 2, 3, 4, 5];
+  isSubmitting = false;
 
-    constructor() {
-        this.reviewForm = this.fb.group({
-            rating: [0, [Validators.required, Validators.min(1), Validators.max(5)]],
-            comment: ['', [Validators.maxLength(500)]]
-        });
-    }
+  constructor() {
+    this.reviewForm = this.fb.group({
+      rating: [0, [Validators.required, Validators.min(1), Validators.max(5)]],
+      comment: ['', [Validators.maxLength(500)]]
+    });
+  }
 
-    get currentRating(): number {
-        return this.reviewForm.get('rating')?.value || 0;
-    }
+  get currentRating(): number {
+    return this.reviewForm.get('rating')?.value || 0;
+  }
 
-    setRating(rating: number) {
-        this.reviewForm.patchValue({ rating });
-    }
+  setRating(rating: number) {
+    this.reviewForm.patchValue({ rating });
+  }
 
-    onSubmit() {
-        if (this.reviewForm.invalid) return;
+  onSubmit() {
+    if (this.reviewForm.invalid) return;
 
-        this.isSubmitting = true;
-        const command = {
-            missionId: this.missionId,
-            ...this.reviewForm.value
-        };
+    this.isSubmitting = true;
+    const command = {
+      missionId: this.missionId,
+      ...this.reviewForm.value
+    };
 
-        this.reviewService.createReview(command)
-            .pipe(finalize(() => this.isSubmitting = false))
-            .subscribe({
-                next: () => {
-                    this.activeModal.close('submitted');
-                    this.reviewSubmitted.emit();
-                },
-                error: (err) => {
-                    console.error('Failed to submit review', err);
-                    // TODO: Show toast error
-                }
-            });
-    }
+    this.reviewService.createReview(command)
+      .pipe(finalize(() => this.isSubmitting = false))
+      .subscribe({
+        next: () => {
+          this.activeModal.close('submitted');
+          this.reviewSubmitted.emit();
+        },
+        error: (err) => {
+          console.error('Failed to submit review', err);
+          // TODO: Show toast error
+        }
+      });
+  }
 }
