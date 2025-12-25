@@ -43,6 +43,9 @@ namespace TaviLi.Infrastructure.Persistence
                     .WithMany(u => u.AssignedMissions)
                     .HasForeignKey(m => m.CourierUserId)
                     .OnDelete(DeleteBehavior.SetNull); // אם שליח נמחק, המשימה חוזרת ל-null
+
+                 entity.OwnsOne(m => m.PickupAddress);
+                 entity.OwnsOne(m => m.DropoffAddress);
             });
         }
     }

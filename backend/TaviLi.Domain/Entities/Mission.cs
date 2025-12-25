@@ -1,4 +1,5 @@
 using TaviLi.Domain.Enums;
+using TaviLi.Domain.ValueObjects;
 
 namespace TaviLi.Domain.Entities
 {
@@ -14,8 +15,8 @@ namespace TaviLi.Domain.Entities
         public virtual User? CourierUser { get; set; }
 
         // --- פרטי המשימה ---
-        public required string PickupAddress { get; set; } 
-        public required string DropoffAddress { get; set; } 
+        public required Address PickupAddress { get; set; } 
+        public required Address DropoffAddress { get; set; } 
         public required string PackageDescription { get; set; } 
         public PackageSize PackageSize { get; set; } 
         public decimal OfferedPrice { get; set; } 

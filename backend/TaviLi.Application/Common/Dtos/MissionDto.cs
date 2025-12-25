@@ -5,8 +5,8 @@ namespace TaviLi.Application.Common.Dtos
     public class MissionDto
     {
         public int Id { get; set; }
-        public required string PickupAddress { get; set; }
-        public required string DropoffAddress { get; set; }
+        public required AddressDto PickupAddress { get; set; }
+        public required AddressDto DropoffAddress { get; set; }
         public required string PackageDescription { get; set; }
         public PackageSize PackageSize { get; set; }
         public decimal OfferedPrice { get; set; }

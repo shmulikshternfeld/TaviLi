@@ -49,7 +49,7 @@ builder.Services.AddRateLimiter(options =>
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(connectionString));
+    options.UseNpgsql(connectionString, o => o.UseNetTopologySuite()));
 builder.Services.AddScoped<TaviLi.Application.Common.Interfaces.IApplicationDbContext>(provider => 
     provider.GetRequiredService<ApplicationDbContext>());
     

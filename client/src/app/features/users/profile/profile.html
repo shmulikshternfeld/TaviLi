@@ -5,7 +5,11 @@
                 <!-- Header/Cover -->
                 <div class="card-header bg-gradient-primary text-white p-4 text-center position-relative"
                     style="background: var(--primary-gradient);">
+                    @if (isReadOnly()) {
+                    <h3 class="mb-0">פרופיל משתמש</h3>
+                    } @else {
                     <h3 class="mb-0">הפרופיל שלי</h3>
+                    }
                 </div>
 
                 <div class="card-body p-4 text-center">

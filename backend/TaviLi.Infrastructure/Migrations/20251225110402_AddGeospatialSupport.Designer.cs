@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetTopologySuite.Geometries;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -12,9 +13,11 @@ using TaviLi.Infrastructure.Persistence;
 namespace TaviLi.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251225110402_AddGeospatialSupport")]
+    partial class AddGeospatialSupport
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -369,17 +372,8 @@ namespace TaviLi.Infrastructure.Migrations
                             b1.Property<int>("MissionId")
                                 .HasColumnType("integer");
 
-                            b1.Property<int?>("ApartmentNumber")
-                                .HasColumnType("integer");
-
                             b1.Property<string>("City")
                                 .HasColumnType("text");
-
-                            b1.Property<string>("Entrance")
-                                .HasColumnType("text");
-
-                            b1.Property<int?>("Floor")
-                                .HasColumnType("integer");
 
                             b1.Property<string>("FullAddress")
                                 .IsRequired()
@@ -408,17 +402,8 @@ namespace TaviLi.Infrastructure.Migrations
                             b1.Property<int>("MissionId")
                                 .HasColumnType("integer");
 
-                            b1.Property<int?>("ApartmentNumber")
-                                .HasColumnType("integer");
-
                             b1.Property<string>("City")
                                 .HasColumnType("text");
-
-                            b1.Property<string>("Entrance")
-                                .HasColumnType("text");
-
-                            b1.Property<int?>("Floor")
-                                .HasColumnType("integer");
 
                             b1.Property<string>("FullAddress")
                                 .IsRequired()

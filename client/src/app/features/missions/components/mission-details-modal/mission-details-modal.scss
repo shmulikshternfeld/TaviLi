@@ -14,15 +14,18 @@ $light-bg: #F0F2F5;
     // No opacity property here!
     backdrop-filter: blur(4px);
     display: flex;
-    align-items: center;
+    align-items: flex-start; // Changed from center to allow scrolling
     justify-content: center;
     z-index: 9000;
+    overflow-y: auto; // Enable scrolling
+    padding: 20px 0;
 }
 
 .modal-dialog {
     width: 90%;
     max-width: 450px;
-    margin: 0;
+    margin: auto; // Centers vertically if space allows
+    pointer-events: auto; // Ensure clicks work
 }
 
 .modal-content {
