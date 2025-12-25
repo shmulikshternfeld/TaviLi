@@ -39,7 +39,8 @@ export class MissionService {
   }
 
   getMyAssignedMissions(): Observable<Mission[]> {
-    return this.api.get<Mission[]>('/missions/my-assigned');
+    const params = new HttpParams().set('t', new Date().getTime().toString());
+    return this.api.get<Mission[]>('/missions/my-assigned', params);
   }
 
   updateMissionStatus(id: number, status: MissionStatus): Observable<Mission> {
@@ -47,7 +48,8 @@ export class MissionService {
   }
 
   getMyCreatedMissions(): Observable<Mission[]> {
-    return this.api.get<Mission[]>('/missions/my-created');
+    const params = new HttpParams().set('t', new Date().getTime().toString());
+    return this.api.get<Mission[]>('/missions/my-created', params);
   }
 
   requestMission(missionId: number): Observable<number> {
