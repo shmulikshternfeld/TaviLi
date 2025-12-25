@@ -25,6 +25,7 @@ namespace TaviLi.Application.Features.Missions.Queries.GetMissionRequests
                     MissionId = r.MissionId,
                     CourierId = r.CourierId,
                     CourierName = r.Courier.UserName ?? "Unknown", // Assuming UserName exists on User
+                    CourierProfileImageUrl = r.Courier.ProfileImageUrl,
                     Status = r.Status,
                     RequestTime = r.RequestTime
                 })

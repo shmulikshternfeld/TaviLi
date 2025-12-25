@@ -9,21 +9,26 @@ namespace TaviLi.Application.Features.Missions.Queries.GetOpenMissions
     public class GetOpenMissionsQueryHandler : IRequestHandler<GetOpenMissionsQuery, List<MissionSummaryDto>>
     {
         private readonly IApplicationDbContext _context;
+        private readonly ICurrentUserService _currentUserService;
 
-        public GetOpenMissionsQueryHandler(IApplicationDbContext context)
+        public GetOpenMissionsQueryHandler(IApplicationDbContext context, ICurrentUserService currentUserService)
         {
             _context = context;
+            _currentUserService = currentUserService;
         }
 
         public async Task<List<MissionSummaryDto>> Handle(GetOpenMissionsQuery request, CancellationToken cancellationToken)
         {
+            var currentUserId = _currentUserService.GetUserId();
+
             // 1. התחלה: רק משימות פתוחות, וטעינת המשתמש היוצר
             var query = _context.Missions
                 .Include(m => m.CreatorUser)
+                // Include Requests only if we need to check MyRequestStatus
+                .Include(m => m.Requests) 
                 .Where(m => m.Status == MissionStatus.Open)
                 .AsQueryable();
 
-            // 2. חיפוש כללי (עיר שקשורה למשימה - מוצא או יעד)
             // 2. חיפוש כללי (עיר שקשורה למשימה - מוצא או יעד)
             if (!string.IsNullOrWhiteSpace(request.RelatedCity))
             {
@@ -62,7 +67,12 @@ namespace TaviLi.Application.Features.Missions.Queries.GetOpenMissions
                 CreationTime = m.CreationTime,
                 // שימוש חכם בשם או באימייל
                 CreatorName = m.CreatorUser?.Name ?? m.CreatorUser?.Email,
-                CreatorUserId = m.CreatorUserId
+                CreatorUserId = m.CreatorUserId,
+                CreatorProfileImageUrl = m.CreatorUser?.ProfileImageUrl,
+                // Check if current user has a request for this mission
+                MyRequestStatus = !string.IsNullOrEmpty(currentUserId) 
+                    ? m.Requests.FirstOrDefault(r => r.CourierId == currentUserId)?.Status 
+                    : null
             }).ToList();
 
             return dtos;

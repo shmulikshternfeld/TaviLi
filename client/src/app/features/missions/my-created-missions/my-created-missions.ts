@@ -1,5 +1,6 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { interval, Subscription, startWith, switchMap } from 'rxjs';
 import { MissionService } from '../../../core/services/mission.service';
 import { Mission, MissionStatus } from '../../../core/models/mission.model';
 import { MissionStatusPipe } from '../../../shared/pipes/mission-status.pipe';
@@ -14,31 +15,58 @@ import { MissionRequestsModalComponent } from '../components/mission-requests-mo
   standalone: true,
   imports: [CommonModule, MissionStatusPipe, PackageSizePipe, RouterLink, MissionRequestsModalComponent]
 })
-export class MyCreatedMissions implements OnInit {
+export class MyCreatedMissions implements OnInit, OnDestroy {
   private missionService = inject(MissionService);
 
   missions = signal<Mission[]>([]);
   isLoading = signal<boolean>(true);
   selectedMissionId = signal<number | null>(null);
 
+  private pollSub: Subscription | null = null;
+
   MissionStatus = MissionStatus;
 
   ngOnInit(): void {
-    this.loadMissions();
+    this.startPolling();
   }
 
-  loadMissions(): void {
+  ngOnDestroy(): void {
+    this.stopPolling();
+  }
+
+  startPolling(): void {
     this.isLoading.set(true);
-    this.missionService.getMyCreatedMissions().subscribe({
-      next: (data) => {
-        this.missions.set(data);
-        this.isLoading.set(false);
-      },
-      error: (err) => {
-        console.error(err);
-        this.isLoading.set(false);
-      }
-    });
+    // Poll every 5 seconds (more frequent for user's own items)
+    this.pollSub = interval(5000)
+      .pipe(
+        startWith(0),
+        switchMap(() => this.missionService.getMyCreatedMissions())
+      )
+      .subscribe({
+        next: (data) => {
+          this.missions.set(data);
+          // Only stop loading spinner on first load or if it's still running
+          if (this.isLoading()) {
+            this.isLoading.set(false);
+          }
+        },
+        error: (err) => {
+          console.error('Polling error:', err);
+          this.isLoading.set(false);
+        }
+      });
+  }
+
+  stopPolling(): void {
+    if (this.pollSub) {
+      this.pollSub.unsubscribe();
+      this.pollSub = null;
+    }
+  }
+
+  // Helper for manual refresh if needed (e.g. after closing modal)
+  manualRefresh(): void {
+    this.missionService.getMyCreatedMissions().subscribe(data => this.missions.set(data));
   }
 
   openRequests(id: number): void {
@@ -47,6 +75,6 @@ export class MyCreatedMissions implements OnInit {
 
   closeRequests(): void {
     this.selectedMissionId.set(null);
-    this.loadMissions(); // Reload to see status changes if approved
+    this.manualRefresh(); // Reload immediate state while polling continues
   }
 }

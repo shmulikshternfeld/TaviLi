@@ -1,5 +1,6 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { interval, Subscription, startWith, switchMap } from 'rxjs';
 import { MissionService } from '../../../core/services/mission.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { Mission, MissionStatus, MissionRequestStatus } from '../../../core/models/mission.model';
@@ -13,33 +14,59 @@ import { PackageSizePipe } from '../../../shared/pipes/package-size.pipe';
   standalone: true,
   imports: [CommonModule, MissionStatusPipe, PackageSizePipe]
 })
-export class MyMissions implements OnInit {
+export class MyMissions implements OnInit, OnDestroy {
   private missionService = inject(MissionService);
   private notify = inject(NotificationService);
 
   missions = signal<Mission[]>([]);
   isLoading = signal<boolean>(true);
 
+  private pollSub: Subscription | null = null;
+
   // כדי להשתמש ב-Enum ב-HTML
   MissionStatus = MissionStatus;
   MissionRequestStatus = MissionRequestStatus;
 
   ngOnInit(): void {
-    this.loadMissions();
+    this.startPolling();
   }
 
-  loadMissions(): void {
+  ngOnDestroy(): void {
+    this.stopPolling();
+  }
+
+  startPolling(): void {
     this.isLoading.set(true);
-    this.missionService.getMyAssignedMissions().subscribe({
-      next: (data) => {
-        this.missions.set(data);
-        this.isLoading.set(false);
-      },
-      error: (err) => {
-        console.error(err);
-        this.isLoading.set(false);
-      }
-    });
+    // Poll every 5 seconds to catch new assignments quickly
+    this.pollSub = interval(5000)
+      .pipe(
+        startWith(0),
+        switchMap(() => this.missionService.getMyAssignedMissions())
+      )
+      .subscribe({
+        next: (data) => {
+          this.missions.set(data);
+          // Stop loading spinner if it's running
+          if (this.isLoading()) {
+            this.isLoading.set(false);
+          }
+        },
+        error: (err) => {
+          console.error('Polling error:', err);
+          this.isLoading.set(false);
+        }
+      });
+  }
+
+  stopPolling(): void {
+    if (this.pollSub) {
+      this.pollSub.unsubscribe();
+      this.pollSub = null;
+    }
+  }
+
+  manualRefresh(): void {
+    this.missionService.getMyAssignedMissions().subscribe(data => this.missions.set(data));
   }
 
   // קידום הסטטוס לשלב הבא
@@ -75,7 +102,7 @@ export class MyMissions implements OnInit {
     this.missionService.updateMissionStatus(mission.id, nextStatus).subscribe({
       next: () => {
         this.notify.success('הסטטוס עודכן בהצלחה');
-        this.loadMissions(); // רענון הנתונים
+        this.manualRefresh(); // רענון הנתונים
       },
       error: (err) => {
         console.error(err);

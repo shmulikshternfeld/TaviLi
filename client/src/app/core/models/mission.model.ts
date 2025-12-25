@@ -25,9 +25,10 @@ export interface MissionRequest {
   id: number;
   missionId: number;
   courierId: string;
-  courierName?: string;
+  courierName: string;
+  courierProfileImageUrl?: string;
   status: MissionRequestStatus;
-  requestTime: Date;
+  requestTime: Date; // ISO string from backend
 }
 
 // תואם ל-MissionSummaryDto ו-MissionDto
@@ -35,14 +36,14 @@ export interface Mission {
   id: number;
   pickupAddress: string;
   dropoffAddress: string;
-  packageDescription?: string; // קיים רק ב-Details
-  packageSize: PackageSize | string; // תמיכה גם במספר וגם בטקסט מהשרת
+  packageDescription: string;
+  packageSize: PackageSize;
   offeredPrice: number;
   status: MissionStatus;
   creationTime: Date;
-  creatorName?: string;
-  creatorUserId?: string;
-  requests?: MissionRequest[];
-  pendingRequestsCount?: number;
-  myRequestStatus?: MissionRequestStatus; // הסטטוס שלי מול המשימה
+  creatorName: string;
+  creatorUserId: string;
+  creatorProfileImageUrl?: string;
+  myRequestStatus?: MissionRequestStatus;
+  pendingRequestsCount: number;
 }

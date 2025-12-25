@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { MissionService } from '../../../core/services/mission.service';
@@ -8,6 +8,7 @@ import { PackageSizePipe } from '../../../shared/pipes/package-size.pipe';
 import { NotificationService } from '../../../core/services/notification.service';
 import { MissionFilterComponent, FilterState } from '../components/mission-filter/mission-filter';
 import { MissionDetailsModalComponent } from '../components/mission-details-modal/mission-details-modal';
+import { interval, Subscription, startWith, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-mission-dashboard',
@@ -16,7 +17,7 @@ import { MissionDetailsModalComponent } from '../components/mission-details-moda
   standalone: true,
   imports: [CommonModule, RouterModule, PackageSizePipe, MissionFilterComponent, MissionDetailsModalComponent]
 })
-export class MissionDashboard implements OnInit {
+export class MissionDashboard implements OnInit, OnDestroy {
   private missionService = inject(MissionService);
   private authService = inject(AuthService);
   private router = inject(Router);
@@ -24,6 +25,10 @@ export class MissionDashboard implements OnInit {
 
   // Server Data
   private allFetchedMissions = signal<Mission[]>([]);
+
+  // State
+  private pollSub: Subscription | null = null;
+  private currentServerFilters: { relatedCity?: string, pickupCity?: string, dropoffCity?: string } = {};
 
   // Filters
   private currentPackageSizeFilter = signal<string | PackageSize>('All');
@@ -46,36 +51,57 @@ export class MissionDashboard implements OnInit {
   hasAlreadyRequested = signal<boolean>(false);
 
   ngOnInit(): void {
-    this.loadMissions();
+    this.startPolling();
   }
 
-  loadMissions(filters?: { relatedCity?: string, pickupCity?: string, dropoffCity?: string }): void {
-    this.isLoading.set(true);
-
-    const serviceFilters: any = {};
-    if (filters?.relatedCity) serviceFilters.relatedCity = filters.relatedCity;
-    if (filters?.pickupCity) serviceFilters.pickupCity = filters.pickupCity;
-    if (filters?.dropoffCity) serviceFilters.dropoffCity = filters.dropoffCity;
-
-    this.missionService.getOpenMissions(serviceFilters).subscribe({
-      next: (data) => {
-        this.allFetchedMissions.set(data);
-        this.isLoading.set(false);
-      },
-      error: (err) => {
-        console.error(err);
-        this.isLoading.set(false);
-      }
-    });
+  ngOnDestroy(): void {
+    this.stopPolling();
   }
 
+  startPolling(): void {
+    // Poll every 10 seconds
+    this.pollSub = interval(10000)
+      .pipe(
+        startWith(0),
+        switchMap(() => {
+          // We pass current filters to the service
+          return this.missionService.getOpenMissions(this.currentServerFilters);
+        })
+      )
+      .subscribe({
+        next: (data) => {
+          this.allFetchedMissions.set(data);
+          this.isLoading.set(false); // Only relevant for first load
+        },
+        error: (err) => {
+          console.error(err);
+          this.isLoading.set(false);
+        }
+      });
+  }
+
+  stopPolling(): void {
+    if (this.pollSub) {
+      this.pollSub.unsubscribe();
+      this.pollSub = null;
+    }
+  }
+
+  // Called manually by filter component
   onFilterChange(event: FilterState) {
     this.currentPackageSizeFilter.set(event.packageSize);
-    this.loadMissions({
+
+    // Update filters and restart polling to trigger immediate fetch with new filters
+    this.currentServerFilters = {
       relatedCity: event.relatedCity,
       pickupCity: event.pickupCity,
       dropoffCity: event.dropoffCity
-    });
+    };
+
+    // Restart polling to apply new filers immediately and reset interval
+    this.stopPolling();
+    this.isLoading.set(true); // Show spinner for manual filter change
+    this.startPolling();
   }
 
   onCreateMissionClick(): void {

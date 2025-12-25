@@ -14,6 +14,7 @@ namespace TaviLi.Application.Common.Dtos
         public DateTime CreationTime { get; set; }
         public string? CreatorName { get; set; }
         public string? CreatorUserId { get; set; }
+        public string? CreatorProfileImageUrl { get; set; }
         public MissionRequestStatus? MyRequestStatus { get; set; }
         public int PendingRequestsCount { get; set; }
     }
