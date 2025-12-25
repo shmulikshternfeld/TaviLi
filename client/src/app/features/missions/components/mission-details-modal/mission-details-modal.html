@@ -53,8 +53,7 @@
                     <div class="info-card">
                         <i class="bi bi-calendar-event text-warning mb-2" style="font-size: 1.5rem;"></i>
                         <span class="label">פורסם</span>
-                        <span class="value">{{ (mission?.creationTime ? mission!.creationTime + 'Z' : '') |
-                            date:'dd/MM/yy HH:mm' }}</span>
+                        <span class="value">{{ mission?.creationTime | date:'dd/MM/yy HH:mm' }}</span>
                     </div>
                 </div>
 
