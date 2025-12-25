@@ -19,6 +19,7 @@ export class MyMissions implements OnInit {
 
   missions = signal<Mission[]>([]);
   isLoading = signal<boolean>(true);
+  monthlyEarnings = signal<number>(0);
 
   // כדי להשתמש ב-Enum ב-HTML
   MissionStatus = MissionStatus;
@@ -39,6 +40,11 @@ export class MyMissions implements OnInit {
         console.error(err);
         this.isLoading.set(false);
       }
+    });
+
+    this.missionService.getMyMonthlyEarnings().subscribe({
+      next: (amount) => this.monthlyEarnings.set(amount),
+      error: (err) => console.error('Failed to load earnings', err)
     });
   }
 

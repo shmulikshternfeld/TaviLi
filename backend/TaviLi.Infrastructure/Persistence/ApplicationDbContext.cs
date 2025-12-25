@@ -13,6 +13,7 @@ namespace TaviLi.Infrastructure.Persistence
         // מגדיר את הטבלה 'Missions' בבסיס הנתונים
         public DbSet<Mission> Missions { get; set; }
         public DbSet<MissionRequest> MissionRequests { get; set; }
+        public DbSet<Review> Reviews { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -43,6 +44,24 @@ namespace TaviLi.Infrastructure.Persistence
                     .WithMany(u => u.AssignedMissions)
                     .HasForeignKey(m => m.CourierUserId)
                     .OnDelete(DeleteBehavior.SetNull); // אם שליח נמחק, המשימה חוזרת ל-null
+            });
+
+            builder.Entity<Review>(entity =>
+            {
+                entity.HasOne(r => r.Mission)
+                    .WithOne()
+                    .HasForeignKey<Review>(r => r.MissionId)
+                    .OnDelete(DeleteBehavior.NoAction); // Avoid multiple cascade paths
+
+                entity.HasOne(r => r.Reviewer)
+                    .WithMany()
+                    .HasForeignKey(r => r.ReviewerId)
+                    .OnDelete(DeleteBehavior.NoAction);
+
+                entity.HasOne(r => r.Reviewee)
+                    .WithMany()
+                    .HasForeignKey(r => r.RevieweeId)
+                    .OnDelete(DeleteBehavior.NoAction);
             });
         }
     }

@@ -76,8 +76,16 @@
             {{ mission.offeredPrice }} ₪
           </td>
 
-          <td class="text-end pe-4 text-muted small">
-            {{ mission.creationTime | date:'dd/MM/yy HH:mm' }}
+          <td class="text-end pe-4">
+            @if (mission.status === MissionStatus.Completed) {
+            <button class="btn btn-outline-warning btn-sm" (click)="openReviewModal(mission.id)">
+              <i class="bi bi-star"></i> כתוב ביקורת
+            </button>
+            } @else {
+            <span class="text-muted small">
+              {{ mission.creationTime | date:'dd/MM/yy HH:mm' }}
+            </span>
+            }
           </td>
         </tr>
         }
@@ -138,6 +146,12 @@
           <div>#{{ mission.id }} • {{ mission.packageSize | packageSize }}</div>
           <div>{{ mission.creationTime | date:'dd/MM HH:mm' }}</div>
         </div>
+
+        @if (mission.status === MissionStatus.Completed) {
+        <button class="btn btn-outline-warning btn-sm" (click)="openReviewModal(mission.id)">
+          <i class="bi bi-star"></i> כתוב ביקורת
+        </button>
+        }
       </div>
     </div>
     }

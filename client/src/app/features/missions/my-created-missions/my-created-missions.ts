@@ -1,11 +1,14 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MissionService } from '../../../core/services/mission.service';
+import { NotificationService } from '../../../core/services/notification.service';
 import { Mission, MissionStatus } from '../../../core/models/mission.model';
 import { MissionStatusPipe } from '../../../shared/pipes/mission-status.pipe';
 import { PackageSizePipe } from '../../../shared/pipes/package-size.pipe';
 import { RouterLink } from '@angular/router';
 import { MissionRequestsModalComponent } from '../components/mission-requests-modal/mission-requests-modal';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ReviewFormComponent } from '../../reviews/review-form/review-form.component';
 
 @Component({
   selector: 'app-my-created-missions',
@@ -16,6 +19,8 @@ import { MissionRequestsModalComponent } from '../components/mission-requests-mo
 })
 export class MyCreatedMissions implements OnInit {
   private missionService = inject(MissionService);
+  private modalService = inject(NgbModal);
+  private notify = inject(NotificationService);
 
   missions = signal<Mission[]>([]);
   isLoading = signal<boolean>(true);
@@ -48,5 +53,16 @@ export class MyCreatedMissions implements OnInit {
   closeRequests(): void {
     this.selectedMissionId.set(null);
     this.loadMissions(); // Reload to see status changes if approved
+  }
+
+  openReviewModal(missionId: number) {
+    const modalRef = this.modalService.open(ReviewFormComponent, { centered: true });
+    modalRef.componentInstance.missionId = missionId;
+
+    modalRef.result.then((result) => {
+      if (result === 'submitted') {
+        this.notify.success('הביקורת נשלחה בהצלחה!');
+      }
+    }, () => { });
   }
 }

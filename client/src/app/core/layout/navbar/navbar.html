@@ -62,7 +62,7 @@
           <!-- Navigation Links -->
           <div class="d-flex gap-4">
             <a routerLink="/missions/dashboard" routerLinkActive="active-link" class="nav-link">לוח משלוחים</a>
-            @if (authService.hasRole('Client')) {
+            @if (authService.hasRole('Client') && !authService.hasRole('Courier')) {
             <a routerLink="/missions/my-created" routerLinkActive="active-link" class="nav-link">המשלוחים שלי 📦</a>
             }
             @if (authService.hasRole('Courier')) {
@@ -98,7 +98,7 @@
       <div class="d-flex flex-column gap-3">
         <a routerLink="/missions/dashboard" (click)="closeMenu()" class="nav-link fs-5"><i class="bi bi-grid ms-2"></i>
           לוח משלוחים</a>
-        @if (authService.hasRole('Client')) {
+        @if (authService.hasRole('Client') && !authService.hasRole('Courier')) {
         <a routerLink="/missions/my-created" (click)="closeMenu()" class="nav-link fs-5"><i
             class="bi bi-box-seam ms-2"></i> המשלוחים שלי</a>
         }

@@ -11,6 +11,7 @@ using TaviLi.Application.Features.Missions.Commands.UpdateStatus;
 using TaviLi.Application.Features.Missions.Commands.CreateMissionRequest;
 using TaviLi.Application.Features.Missions.Commands.ApproveMissionRequest;
 using TaviLi.Application.Features.Missions.Queries.GetMissionRequests;
+using TaviLi.Application.Features.Missions.Queries.GetMyMonthlyEarnings;
 
 namespace TaviLi.Api.Controllers
 {
@@ -147,6 +148,14 @@ namespace TaviLi.Api.Controllers
             }
             catch (KeyNotFoundException) { return NotFound(); }
             catch (UnauthorizedAccessException) { return Forbid(); }
+        }
+        // GET api/missions/my-monthly-earnings
+        [HttpGet("my-monthly-earnings")]
+        [Authorize(Roles = "Courier")]
+        public async Task<ActionResult<decimal>> GetMyMonthlyEarnings()
+        {
+            var result = await _mediator.Send(new GetMyMonthlyEarningsQuery());
+            return Ok(result);
         }
     }
 }

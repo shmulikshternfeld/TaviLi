@@ -61,4 +61,8 @@ export class MissionService {
   approveRequest(requestId: number): Observable<void> {
     return this.api.post<void>(`/missions/requests/${requestId}/approve`, {});
   }
+
+  getMyMonthlyEarnings(): Observable<number> {
+    return this.api.get<number>('/missions/my-monthly-earnings');
+  }
 }
