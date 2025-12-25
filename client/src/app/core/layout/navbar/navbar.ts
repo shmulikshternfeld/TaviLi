@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, ElementRef, HostListener } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { CommonModule } from '@angular/common';
@@ -15,6 +15,27 @@ export class Navbar {
   authService = inject(AuthService);
   public router = inject(Router);
   private notify = inject(NotificationService);
+  private eRef = inject(ElementRef);
+
+  @HostListener('document:click', ['$event'])
+  clickout(event: Event) {
+    if (this.isUserMenuOpen()) {
+      const target = event.target as HTMLElement;
+      // Check if click is inside the user dropdown container
+      const container = this.eRef.nativeElement.querySelector('.user-dropdown-container');
+      const menu = this.eRef.nativeElement.querySelector('.user-dropdown-menu');
+
+      if (container && container.contains(target)) {
+        return; // Clicked on trigger
+      }
+      if (menu && menu.contains(target)) {
+        return; // Clicked inside menu
+      }
+
+      // Clicked outside
+      this.closeUserMenu();
+    }
+  }
 
   // Responsive Menu State
   isMenuOpen = signal<boolean>(false);
