@@ -14,43 +14,75 @@
             <div class="col-12 position-relative">
               <label class="form-label">מאיפה אוספים? <i class="bi bi-geo-alt text-danger"></i></label>
               <input type="text" class="form-control" formControlName="pickupAddress"
-                placeholder="למשל: בן יהודה 3, תל אביב"
-                (input)="onPickupInput($event)"
+                placeholder="למשל: בן יהודה 3, תל אביב" (input)="onPickupInput($event)"
                 [class.is-invalid]="form.get('pickupAddress')?.invalid && form.get('pickupAddress')?.touched"
                 autocomplete="off">
               @if (showPickupSuggestions && pickupSuggestions.length > 0) {
-                <ul class="list-group position-absolute w-100 shadow-sm" style="z-index: 1000; direction: ltr;">
-                  @for (feature of pickupSuggestions; track feature.id) {
-                    <li class="list-group-item list-group-item-action cursor-pointer" (click)="selectPickup(feature)">
-                      {{ feature.place_name }}
-                    </li>
-                  }
-                </ul>
+              <ul class="list-group position-absolute w-100 shadow-sm" style="z-index: 1000; direction: ltr;">
+                @for (feature of pickupSuggestions; track feature.id) {
+                <li class="list-group-item list-group-item-action cursor-pointer" (click)="selectPickup(feature)">
+                  {{ feature.place_name }}
+                </li>
+                }
+              </ul>
               }
               @if (form.get('pickupAddress')?.hasError('required') && form.get('pickupAddress')?.touched) {
               <div class="text-danger small">שדה חובה</div>
               }
             </div>
 
+            <div class="col-12">
+              <div class="row g-2">
+                <div class="col-4">
+                  <input type="text" class="form-control form-control-sm" formControlName="pickupEntrance"
+                    placeholder="כניסה (אופציונלי)">
+                </div>
+                <div class="col-4">
+                  <input type="number" class="form-control form-control-sm" formControlName="pickupFloor"
+                    placeholder="קומה (אופציונלי)">
+                </div>
+                <div class="col-4">
+                  <input type="number" class="form-control form-control-sm" formControlName="pickupApartment"
+                    placeholder="דירה (אופציונלי)">
+                </div>
+              </div>
+            </div>
+
             <div class="col-12 position-relative">
               <label class="form-label">לאן שולחים? <i class="bi bi-flag text-success"></i></label>
               <input type="text" class="form-control" formControlName="dropoffAddress"
-                placeholder="למשל: הרצל 50, רמת גן"
-                (input)="onDropoffInput($event)"
+                placeholder="למשל: הרצל 50, רמת גן" (input)="onDropoffInput($event)"
                 [class.is-invalid]="form.get('dropoffAddress')?.invalid && form.get('dropoffAddress')?.touched"
                 autocomplete="off">
               @if (showDropoffSuggestions && dropoffSuggestions.length > 0) {
-                <ul class="list-group position-absolute w-100 shadow-sm" style="z-index: 1000; direction: ltr;">
-                  @for (feature of dropoffSuggestions; track feature.id) {
-                    <li class="list-group-item list-group-item-action cursor-pointer" (click)="selectDropoff(feature)">
-                      {{ feature.place_name }}
-                    </li>
-                  }
-                </ul>
+              <ul class="list-group position-absolute w-100 shadow-sm" style="z-index: 1000; direction: ltr;">
+                @for (feature of dropoffSuggestions; track feature.id) {
+                <li class="list-group-item list-group-item-action cursor-pointer" (click)="selectDropoff(feature)">
+                  {{ feature.place_name }}
+                </li>
+                }
+              </ul>
               }
               @if (form.get('dropoffAddress')?.hasError('minlength') && form.get('dropoffAddress')?.touched) {
               <div class="text-danger small">כתובת חייבת להכיל לפחות 5 תווים</div>
               }
+            </div>
+
+            <div class="col-12">
+              <div class="row g-2">
+                <div class="col-4">
+                  <input type="text" class="form-control form-control-sm" formControlName="dropoffEntrance"
+                    placeholder="כניסה (אופציונלי)">
+                </div>
+                <div class="col-4">
+                  <input type="number" class="form-control form-control-sm" formControlName="dropoffFloor"
+                    placeholder="קומה (אופציונלי)">
+                </div>
+                <div class="col-4">
+                  <input type="number" class="form-control form-control-sm" formControlName="dropoffApartment"
+                    placeholder="דירה (אופציונלי)">
+                </div>
+              </div>
             </div>
           </div>
 

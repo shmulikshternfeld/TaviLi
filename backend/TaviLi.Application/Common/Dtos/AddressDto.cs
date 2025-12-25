@@ -8,5 +8,8 @@ namespace TaviLi.Application.Common.Dtos
         public string? City { get; set; }
         public string? Street { get; set; }
         public string? HouseNumber { get; set; }
+        public string? Entrance { get; set; }
+        public int? Floor { get; set; }
+        public int? ApartmentNumber { get; set; }
     }
 }

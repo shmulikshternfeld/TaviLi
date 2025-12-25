@@ -55,7 +55,10 @@ namespace TaviLi.Application.Features.Missions.Commands.UpdateStatus
                     Longitude = mission.PickupAddress.Location.X,
                     City = mission.PickupAddress.City,
                     Street = mission.PickupAddress.Street,
-                    HouseNumber = mission.PickupAddress.HouseNumber
+                    HouseNumber = mission.PickupAddress.HouseNumber,
+                    Entrance = mission.PickupAddress.Entrance,
+                    Floor = mission.PickupAddress.Floor,
+                    ApartmentNumber = mission.PickupAddress.ApartmentNumber
                 },
                 DropoffAddress = new AddressDto {
                     FullAddress = mission.DropoffAddress.FullAddress,
@@ -63,7 +66,10 @@ namespace TaviLi.Application.Features.Missions.Commands.UpdateStatus
                     Longitude = mission.DropoffAddress.Location.X,
                     City = mission.DropoffAddress.City,
                     Street = mission.DropoffAddress.Street,
-                    HouseNumber = mission.DropoffAddress.HouseNumber
+                    HouseNumber = mission.DropoffAddress.HouseNumber,
+                    Entrance = mission.DropoffAddress.Entrance,
+                    Floor = mission.DropoffAddress.Floor,
+                    ApartmentNumber = mission.DropoffAddress.ApartmentNumber
                 },
                 PackageDescription = mission.PackageDescription,
                 PackageSize = mission.PackageSize,

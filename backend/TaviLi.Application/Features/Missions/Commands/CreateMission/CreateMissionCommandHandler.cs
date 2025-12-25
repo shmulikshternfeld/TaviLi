@@ -34,7 +34,10 @@ namespace TaviLi.Application.Features.Missions.Commands.CreateMission
                     Location = new NetTopologySuite.Geometries.Point(request.PickupAddress.Longitude, request.PickupAddress.Latitude) { SRID = 4326 },
                     City = request.PickupAddress.City,
                     Street = request.PickupAddress.Street,
-                    HouseNumber = request.PickupAddress.HouseNumber
+                    HouseNumber = request.PickupAddress.HouseNumber,
+                    Entrance = request.PickupAddress.Entrance,
+                    Floor = request.PickupAddress.Floor,
+                    ApartmentNumber = request.PickupAddress.ApartmentNumber
                 },
                 DropoffAddress = new TaviLi.Domain.ValueObjects.Address
                 {
@@ -42,7 +45,10 @@ namespace TaviLi.Application.Features.Missions.Commands.CreateMission
                     Location = new NetTopologySuite.Geometries.Point(request.DropoffAddress.Longitude, request.DropoffAddress.Latitude) { SRID = 4326 },
                     City = request.DropoffAddress.City,
                     Street = request.DropoffAddress.Street,
-                    HouseNumber = request.DropoffAddress.HouseNumber
+                    HouseNumber = request.DropoffAddress.HouseNumber,
+                    Entrance = request.DropoffAddress.Entrance,
+                    Floor = request.DropoffAddress.Floor,
+                    ApartmentNumber = request.DropoffAddress.ApartmentNumber
                 },
                 PackageDescription = request.PackageDescription,
                 PackageSize = request.PackageSize,
@@ -63,7 +69,10 @@ namespace TaviLi.Application.Features.Missions.Commands.CreateMission
                     Longitude = entity.PickupAddress.Location.X,
                     City = entity.PickupAddress.City,
                     Street = entity.PickupAddress.Street,
-                    HouseNumber = entity.PickupAddress.HouseNumber
+                    HouseNumber = entity.PickupAddress.HouseNumber,
+                    Entrance = entity.PickupAddress.Entrance,
+                    Floor = entity.PickupAddress.Floor,
+                    ApartmentNumber = entity.PickupAddress.ApartmentNumber
                 },
                 DropoffAddress = new AddressDto {
                     FullAddress = entity.DropoffAddress.FullAddress,
@@ -71,7 +80,10 @@ namespace TaviLi.Application.Features.Missions.Commands.CreateMission
                     Longitude = entity.DropoffAddress.Location.X,
                     City = entity.DropoffAddress.City,
                     Street = entity.DropoffAddress.Street,
-                    HouseNumber = entity.DropoffAddress.HouseNumber
+                    HouseNumber = entity.DropoffAddress.HouseNumber,
+                    Entrance = entity.DropoffAddress.Entrance,
+                    Floor = entity.DropoffAddress.Floor,
+                    ApartmentNumber = entity.DropoffAddress.ApartmentNumber
                 },
                 PackageDescription = entity.PackageDescription,
                 PackageSize = entity.PackageSize,

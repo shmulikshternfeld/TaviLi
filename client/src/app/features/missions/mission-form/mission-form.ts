@@ -45,7 +45,13 @@ export class MissionForm {
   constructor() {
     this.form = this.fb.group({
       pickupAddress: ['', [Validators.required]],
+      pickupEntrance: [''],
+      pickupFloor: [''],
+      pickupApartment: [''],
       dropoffAddress: ['', [Validators.required]],
+      dropoffEntrance: [''],
+      dropoffFloor: [''],
+      dropoffApartment: [''],
       packageDescription: ['', [Validators.required, Validators.minLength(3)]],
       packageSize: [null, Validators.required],
       offeredPrice: [null, [Validators.required, Validators.min(10)]]
@@ -120,11 +126,24 @@ export class MissionForm {
 
     this.isSubmitting = true;
 
+    const basePickup = this.mapFeatureToDto(this.selectedPickupAddress, this.form.value.pickupAddress);
+    const baseDropoff = this.mapFeatureToDto(this.selectedDropoffAddress, this.form.value.dropoffAddress);
+
     const formValue = {
       ...this.form.value,
       packageSize: Number(this.form.value.packageSize),
-      pickupAddress: this.mapFeatureToDto(this.selectedPickupAddress, this.form.value.pickupAddress),
-      dropoffAddress: this.mapFeatureToDto(this.selectedDropoffAddress, this.form.value.dropoffAddress)
+      pickupAddress: {
+        ...basePickup,
+        Entrance: this.form.value.pickupEntrance,
+        Floor: this.form.value.pickupFloor ? Number(this.form.value.pickupFloor) : null,
+        ApartmentNumber: this.form.value.pickupApartment ? Number(this.form.value.pickupApartment) : null
+      },
+      dropoffAddress: {
+        ...baseDropoff,
+        Entrance: this.form.value.dropoffEntrance,
+        Floor: this.form.value.dropoffFloor ? Number(this.form.value.dropoffFloor) : null,
+        ApartmentNumber: this.form.value.dropoffApartment ? Number(this.form.value.dropoffApartment) : null
+      }
     };
 
     this.missionService.createMission(formValue).subscribe({
