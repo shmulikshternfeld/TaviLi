@@ -18,7 +18,7 @@ export class AuthService {
   isLoggedIn = computed(() => !!this.currentUser());
 
   constructor() {
-    this.loadUserFromStorage();
+    // Initialization moved to APP_INITIALIZER
   }
 
   // --- Public Actions ---
@@ -76,19 +76,35 @@ export class AuthService {
 
   // --- Internal Logic ---
 
+  /**
+   * Attempts to restore the user session from localStorage.
+   * Returns an Observable that completes when the check is done (success or failure).
+   * Used by APP_INITIALIZER.
+   */
+  attemptAutoLogin(): Observable<void> {
+    const token = this.getToken();
+    if (!token) {
+      return new Observable(observer => {
+        observer.complete();
+      });
+    }
+
+    return new Observable(observer => {
+      this.getMe().subscribe({
+        next: (user) => {
+          this.currentUser.set(user);
+          observer.complete();
+        },
+        error: () => {
+          this.logout();
+          observer.complete();
+        }
+      });
+    });
+  }
+
   private handleAuthSuccess(response: AuthResponse): void {
     localStorage.setItem(this.TOKEN_KEY, response.token);
     this.currentUser.set(response.user); // עדכון ה-Signal
-  }
-
-  private loadUserFromStorage(): void {
-    const token = this.getToken();
-    if (token) {
-      // אם יש טוקן, ננסה למשוך את פרטי המשתמש מהשרת
-      this.getMe().subscribe({
-        next: (user) => this.currentUser.set(user),
-        error: () => this.logout()
-      });
-    }
   }
 }
