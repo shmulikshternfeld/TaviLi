@@ -55,8 +55,22 @@ namespace TaviLi.Application.Features.Missions.Commands.AcceptMission
             return new MissionDto
             {
                 Id = mission.Id,
-                PickupAddress = mission.PickupAddress,
-                DropoffAddress = mission.DropoffAddress,
+                PickupAddress = new AddressDto {
+                    FullAddress = mission.PickupAddress.FullAddress,
+                    Latitude = mission.PickupAddress.Location.Y,
+                    Longitude = mission.PickupAddress.Location.X,
+                    City = mission.PickupAddress.City,
+                    Street = mission.PickupAddress.Street,
+                    HouseNumber = mission.PickupAddress.HouseNumber
+                },
+                DropoffAddress = new AddressDto {
+                    FullAddress = mission.DropoffAddress.FullAddress,
+                    Latitude = mission.DropoffAddress.Location.Y,
+                    Longitude = mission.DropoffAddress.Location.X,
+                    City = mission.DropoffAddress.City,
+                    Street = mission.DropoffAddress.Street,
+                    HouseNumber = mission.DropoffAddress.HouseNumber
+                },
                 PackageDescription = mission.PackageDescription,
                 PackageSize = mission.PackageSize,
                 OfferedPrice = mission.OfferedPrice,

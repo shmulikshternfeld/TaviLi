@@ -34,8 +34,8 @@ namespace TaviLi.Application.Features.Missions.Queries.GetMyAssignedMissions
                  return new MissionSummaryDto
                  {
                     Id = m.Id,
-                    PickupAddress = m.PickupAddress,
-                    DropoffAddress = m.DropoffAddress,
+                    PickupAddress = m.PickupAddress.FullAddress,
+                    DropoffAddress = m.DropoffAddress.FullAddress,
                     PackageDescription = m.PackageDescription,
                     PackageSize = m.PackageSize,
                     OfferedPrice = m.OfferedPrice,

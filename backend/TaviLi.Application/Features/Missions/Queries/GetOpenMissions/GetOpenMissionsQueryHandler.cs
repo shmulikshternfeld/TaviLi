@@ -24,22 +24,23 @@ namespace TaviLi.Application.Features.Missions.Queries.GetOpenMissions
                 .AsQueryable();
 
             // 2. חיפוש כללי (עיר שקשורה למשימה - מוצא או יעד)
+            // 2. חיפוש כללי (עיר שקשורה למשימה - מוצא או יעד)
             if (!string.IsNullOrWhiteSpace(request.RelatedCity))
             {
-                query = query.Where(m => m.PickupAddress.Contains(request.RelatedCity) || 
-                                         m.DropoffAddress.Contains(request.RelatedCity));
+                query = query.Where(m => m.PickupAddress.FullAddress.Contains(request.RelatedCity) || 
+                                         m.DropoffAddress.FullAddress.Contains(request.RelatedCity));
             }
 
             // 3. סינון איסוף ספציפי (אם הוזן)
             if (!string.IsNullOrWhiteSpace(request.PickupCity))
             {
-                query = query.Where(m => m.PickupAddress.Contains(request.PickupCity));
+                query = query.Where(m => m.PickupAddress.FullAddress.Contains(request.PickupCity));
             }
 
             // 4. סינון מסירה ספציפי (אם הוזן)
             if (!string.IsNullOrWhiteSpace(request.DropoffCity))
             {
-                query = query.Where(m => m.DropoffAddress.Contains(request.DropoffCity));
+                query = query.Where(m => m.DropoffAddress.FullAddress.Contains(request.DropoffCity));
             }
 
             // 4. ביצוע השליפה (מיון והגבלה ל-50)
@@ -52,8 +53,8 @@ namespace TaviLi.Application.Features.Missions.Queries.GetOpenMissions
             var dtos = missions.Select(m => new MissionSummaryDto
             {
                 Id = m.Id,
-                PickupAddress = m.PickupAddress,
-                DropoffAddress = m.DropoffAddress,
+                PickupAddress = m.PickupAddress.FullAddress,
+                DropoffAddress = m.DropoffAddress.FullAddress,
                 PackageDescription = m.PackageDescription,
                 PackageSize = m.PackageSize,
                 OfferedPrice = m.OfferedPrice,

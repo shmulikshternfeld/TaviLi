@@ -31,8 +31,22 @@ namespace TaviLi.Infrastructure.Persistence
                     new Mission
                     {
                         CreatorUserId = clientUser.Id,
-                        PickupAddress = "רחוב הרצל 1, תל אביב",
-                        DropoffAddress = "רחוב ויצמן 10, רחובות",
+                        PickupAddress = new TaviLi.Domain.ValueObjects.Address 
+                        { 
+                            FullAddress = "רחוב הרצל 1, תל אביב",
+                            Location = new NetTopologySuite.Geometries.Point(34.7818, 32.0853) { SRID = 4326 },
+                            City = "תל אביב",
+                            Street = "הרצל",
+                            HouseNumber = "1"
+                        },
+                        DropoffAddress = new TaviLi.Domain.ValueObjects.Address 
+                        { 
+                            FullAddress = "רחוב ויצמן 10, רחובות",
+                            Location = new NetTopologySuite.Geometries.Point(34.8113, 31.8928) { SRID = 4326 },
+                            City = "רחובות",
+                            Street = "ויצמן",
+                            HouseNumber = "10"
+                        },
                         PackageSize = PackageSize.Medium,
                         OfferedPrice = 150,
                         Status = MissionStatus.Open,
@@ -42,8 +56,22 @@ namespace TaviLi.Infrastructure.Persistence
                     new Mission
                     {
                         CreatorUserId = clientUser.Id,
-                        PickupAddress = "בן יהודה 20, תל אביב",
-                        DropoffAddress = "הירקון 5, חיפה",
+                        PickupAddress = new TaviLi.Domain.ValueObjects.Address 
+                        { 
+                            FullAddress = "בן יהודה 20, תל אביב",
+                            Location = new NetTopologySuite.Geometries.Point(34.7818, 32.0853) { SRID = 4326 },
+                            City = "תל אביב",
+                            Street = "בן יהודה",
+                            HouseNumber = "20"
+                        },
+                        DropoffAddress = new TaviLi.Domain.ValueObjects.Address 
+                        { 
+                            FullAddress = "הירקון 5, חיפה",
+                            Location = new NetTopologySuite.Geometries.Point(34.9896, 32.7940) { SRID = 4326 },
+                            City = "חיפה",
+                            Street = "הירקון",
+                            HouseNumber = "5"
+                        },
                         PackageSize = PackageSize.Small,
                         OfferedPrice = 80,
                         Status = MissionStatus.Open,

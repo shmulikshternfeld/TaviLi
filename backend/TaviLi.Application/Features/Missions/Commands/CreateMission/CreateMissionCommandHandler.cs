@@ -28,8 +28,22 @@ namespace TaviLi.Application.Features.Missions.Commands.CreateMission
             var entity = new Mission
             {
                 CreatorUserId = userId,
-                PickupAddress = request.PickupAddress,
-                DropoffAddress = request.DropoffAddress,
+                PickupAddress = new TaviLi.Domain.ValueObjects.Address
+                {
+                    FullAddress = request.PickupAddress.FullAddress,
+                    Location = new NetTopologySuite.Geometries.Point(request.PickupAddress.Longitude, request.PickupAddress.Latitude) { SRID = 4326 },
+                    City = request.PickupAddress.City,
+                    Street = request.PickupAddress.Street,
+                    HouseNumber = request.PickupAddress.HouseNumber
+                },
+                DropoffAddress = new TaviLi.Domain.ValueObjects.Address
+                {
+                    FullAddress = request.DropoffAddress.FullAddress,
+                    Location = new NetTopologySuite.Geometries.Point(request.DropoffAddress.Longitude, request.DropoffAddress.Latitude) { SRID = 4326 },
+                    City = request.DropoffAddress.City,
+                    Street = request.DropoffAddress.Street,
+                    HouseNumber = request.DropoffAddress.HouseNumber
+                },
                 PackageDescription = request.PackageDescription,
                 PackageSize = request.PackageSize,
                 OfferedPrice = request.OfferedPrice,
@@ -43,8 +57,22 @@ namespace TaviLi.Application.Features.Missions.Commands.CreateMission
             return new MissionDto
             {
                 Id = entity.Id,
-                PickupAddress = entity.PickupAddress,
-                DropoffAddress = entity.DropoffAddress,
+                PickupAddress = new AddressDto {
+                    FullAddress = entity.PickupAddress.FullAddress,
+                    Latitude = entity.PickupAddress.Location.Y,
+                    Longitude = entity.PickupAddress.Location.X,
+                    City = entity.PickupAddress.City,
+                    Street = entity.PickupAddress.Street,
+                    HouseNumber = entity.PickupAddress.HouseNumber
+                },
+                DropoffAddress = new AddressDto {
+                    FullAddress = entity.DropoffAddress.FullAddress,
+                    Latitude = entity.DropoffAddress.Location.Y,
+                    Longitude = entity.DropoffAddress.Location.X,
+                    City = entity.DropoffAddress.City,
+                    Street = entity.DropoffAddress.Street,
+                    HouseNumber = entity.DropoffAddress.HouseNumber
+                },
                 PackageDescription = entity.PackageDescription,
                 PackageSize = entity.PackageSize,
                 OfferedPrice = entity.OfferedPrice,
