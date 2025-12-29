@@ -30,7 +30,8 @@ builder.Services.AddControllers();
             {
                 policy.WithOrigins(allowedOrigins)
                       .AllowAnyHeader()
-                      .AllowAnyMethod();
+                      .AllowAnyMethod()
+                      .WithExposedHeaders("X-Total-Unread");
             });
     });
 
@@ -105,6 +106,7 @@ builder.Services.AddHttpContextAccessor();
 // רושם את השירות החדש שיצרנו
 builder.Services.AddScoped<TaviLi.Application.Common.Interfaces.ICurrentUserService, TaviLi.Infrastructure.Services.CurrentUserService>();
 builder.Services.AddScoped<TaviLi.Application.Common.Interfaces.IImageService, TaviLi.Infrastructure.Services.CloudinaryService>();
+builder.Services.AddScoped<TaviLi.Application.Common.Interfaces.INotificationService, TaviLi.Infrastructure.Services.FirebaseNotificationService>();
 
 var app = builder.Build();
 

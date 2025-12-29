@@ -9,11 +9,16 @@ namespace TaviLi.Application.Features.Missions.Commands.ApproveMissionRequest
     {
         private readonly IApplicationDbContext _context;
         private readonly ICurrentUserService _currentUserService;
+        private readonly INotificationService _notificationService;
 
-        public ApproveMissionRequestCommandHandler(IApplicationDbContext context, ICurrentUserService currentUserService)
+        public ApproveMissionRequestCommandHandler(
+            IApplicationDbContext context, 
+            ICurrentUserService currentUserService,
+            INotificationService notificationService)
         {
             _context = context;
             _currentUserService = currentUserService;
+            _notificationService = notificationService;
         }
 
         public async Task<bool> Handle(ApproveMissionRequestCommand command, CancellationToken cancellationToken)
@@ -57,6 +62,19 @@ namespace TaviLi.Application.Features.Missions.Commands.ApproveMissionRequest
             }
 
             await _context.SaveChangesAsync(cancellationToken);
+
+            // Notify the Courier
+            if (!string.IsNullOrEmpty(request.CourierId))
+            {
+                await _notificationService.SendToUserAsync(
+                    Guid.Parse(request.CourierId),
+                    "בקשתך אושרה! 🎉",
+                    "אושרת לבצע את המשלוח. לחץ לצפייה ומעקב.",
+                    actionUrl: "/active-missions",
+                    type: "Success"
+                );
+            }
+
             return true;
         }
     }

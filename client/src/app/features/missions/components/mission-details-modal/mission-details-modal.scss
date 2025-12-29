@@ -1,3 +1,5 @@
+@use "sass:color";
+
 // Variables
 $teal: #00B894;
 $dark: #2D3436;
@@ -79,7 +81,7 @@ $light-bg: #F0F2F5;
 
 // Banner Header
 .modal-header-banner {
-    background: linear-gradient(135deg, $teal 0%, darken($teal, 10%) 100%);
+    background: linear-gradient(135deg, $teal 0%, color.adjust($teal, $lightness: -10%) 100%);
     height: 160px;
     padding: 24px;
     color: white;
@@ -263,7 +265,7 @@ $light-bg: #F0F2F5;
     transition: all 0.3s;
 
     &:hover {
-        background: darken($teal, 5%);
+        background: color.adjust($teal, $lightness: -5%);
         transform: translateY(-2px);
         box-shadow: 0 10px 20px rgba($teal, 0.3);
     }

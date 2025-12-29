@@ -1,3 +1,5 @@
+@use "sass:color";
+
 .avatar-circle-lg {
     width: 120px;
     height: 120px;
@@ -30,7 +32,7 @@
 
     &:hover {
         transform: scale(1.1);
-        background: darken(#008080, 10%);
+        background: color.adjust(#008080, $lightness: -10%);
     }
 }
 

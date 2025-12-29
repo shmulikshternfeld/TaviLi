@@ -10,6 +10,18 @@
           <i class="bi bi-list fs-1"></i>
         </button>
 
+        <!-- MOBILE: Notification Bell -->
+        @if (authService.isLoggedIn()) {
+        <div class="position-relative d-lg-none cursor-pointer" routerLink="/notifications">
+          <i class="bi bi-bell fs-3 text-dark"></i>
+          @if (notify.unreadCount() > 0) {
+          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem;">
+            {{ notify.unreadCount() > 9 ? '9+' : notify.unreadCount() }}
+          </span>
+          }
+        </div>
+        }
+
         <!-- MOBILE: User Avatar -->
         @if (authService.isLoggedIn()) {
         <div class="d-lg-none avatar-circle-sm" routerLink="/profile">
@@ -26,6 +38,16 @@
 
           <!-- User Actions / Login -->
           @if (authService.isLoggedIn()) {
+          <!-- Desktop Notification Bell -->
+          <div class="position-relative cursor-pointer" routerLink="/notifications">
+            <i class="bi bi-bell fs-4 text-dark hover-scale"></i>
+             @if (notify.unreadCount() > 0) {
+              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.7rem;">
+                {{ notify.unreadCount() > 9 ? '9+' : notify.unreadCount() }}
+              </span>
+             }
+          </div>
+
           <div class="position-relative">
             <div class="d-flex align-items-center user-dropdown-container" (click)="toggleUserMenu()">
               <div class="avatar-circle-sm ms-2">

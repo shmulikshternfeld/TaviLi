@@ -10,11 +10,16 @@ namespace TaviLi.Application.Features.Missions.Commands.CreateMissionRequest
     {
         private readonly IApplicationDbContext _context;
         private readonly ICurrentUserService _currentUserService;
+        private readonly INotificationService _notificationService;
 
-        public CreateMissionRequestCommandHandler(IApplicationDbContext context, ICurrentUserService currentUserService)
+        public CreateMissionRequestCommandHandler(
+            IApplicationDbContext context, 
+            ICurrentUserService currentUserService,
+            INotificationService notificationService)
         {
             _context = context;
             _currentUserService = currentUserService;
+            _notificationService = notificationService;
         }
 
         public async Task<int> Handle(CreateMissionRequestCommand request, CancellationToken cancellationToken)
@@ -54,6 +59,18 @@ namespace TaviLi.Application.Features.Missions.Commands.CreateMissionRequest
 
             _context.MissionRequests.Add(entity);
             await _context.SaveChangesAsync(cancellationToken);
+
+            // Send Notification to Mission Creator
+            if (!string.IsNullOrEmpty(mission.CreatorUserId))
+            {
+                await _notificationService.SendToUserAsync(
+                    Guid.Parse(mission.CreatorUserId),
+                    "בקשה חדשה למשלוח",
+                    "שליח הציע לקחת את המשלוח שלך. לחץ לצפייה בפרטים.",
+                    actionUrl: $"/missions/my-created?missionId={request.MissionId}&openRequests=true",
+                    type: "Info"
+                );
+            }
 
             return entity.Id;
         }

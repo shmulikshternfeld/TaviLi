@@ -13,6 +13,8 @@ namespace TaviLi.Infrastructure.Persistence
         // מגדיר את הטבלה 'Missions' בבסיס הנתונים
         public DbSet<Mission> Missions { get; set; }
         public DbSet<MissionRequest> MissionRequests { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
+        public DbSet<DeviceToken> DeviceTokens { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)

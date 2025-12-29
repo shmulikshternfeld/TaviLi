@@ -7,6 +7,8 @@ namespace TaviLi.Application.Common.Interfaces
     {
         DbSet<Mission> Missions { get; }
         DbSet<MissionRequest> MissionRequests { get; }
+        DbSet<Notification> Notifications { get; }
+        DbSet<DeviceToken> DeviceTokens { get; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }

@@ -1,3 +1,5 @@
+@use "sass:color";
+
 // Variables
 $teal: #00B894;
 $light-bg: #F0F2F5;
@@ -30,7 +32,7 @@ $light-bg: #F0F2F5;
 }
 
 .modal-header-banner {
-    background: linear-gradient(135deg, $teal 0%, darken($teal, 10%) 100%);
+    background: linear-gradient(135deg, $teal 0%, color.adjust($teal, $lightness: -10%) 100%);
     padding: 24px;
     color: white;
     text-align: center;

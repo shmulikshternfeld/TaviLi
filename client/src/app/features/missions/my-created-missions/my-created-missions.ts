@@ -5,7 +5,7 @@ import { MissionService } from '../../../core/services/mission.service';
 import { Mission, MissionStatus } from '../../../core/models/mission.model';
 import { MissionStatusPipe } from '../../../shared/pipes/mission-status.pipe';
 import { PackageSizePipe } from '../../../shared/pipes/package-size.pipe';
-import { RouterLink } from '@angular/router';
+import { RouterLink, ActivatedRoute } from '@angular/router';
 import { MissionRequestsModalComponent } from '../components/mission-requests-modal/mission-requests-modal';
 
 @Component({
@@ -26,8 +26,24 @@ export class MyCreatedMissions implements OnInit, OnDestroy {
 
   MissionStatus = MissionStatus;
 
+  private route = inject(ActivatedRoute);
+
   ngOnInit(): void {
     this.startPolling();
+
+    // Check for deep links (e.g. from notifications)
+    this.route.queryParams.subscribe(params => {
+      console.log('MyCreatedMissions: QueryParams changed', params);
+      const mid = params['missionId'];
+      const openReq = params['openRequests'];
+      if (mid && openReq === 'true') {
+        console.log('MyCreatedMissions: Auto-opening requests for', mid);
+        // We set a small timeout to allow UI/Polling to settle, 
+        // though selectedMissionId is independent.
+        // Ideally we check if mission exists in list, but modal uses ID anyway.
+        this.selectedMissionId.set(+mid);
+      }
+    });
   }
 
   ngOnDestroy(): void {

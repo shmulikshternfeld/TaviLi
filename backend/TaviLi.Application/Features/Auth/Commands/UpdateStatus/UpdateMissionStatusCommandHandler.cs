@@ -3,17 +3,24 @@ using Microsoft.EntityFrameworkCore;
 using TaviLi.Application.Common.Dtos;
 using TaviLi.Application.Common.Interfaces;
 
+using TaviLi.Domain.Enums;
+
 namespace TaviLi.Application.Features.Missions.Commands.UpdateStatus
 {
     public class UpdateMissionStatusCommandHandler : IRequestHandler<UpdateMissionStatusCommand, MissionDto>
     {
         private readonly IApplicationDbContext _context;
         private readonly ICurrentUserService _currentUserService;
+        private readonly INotificationService _notificationService;
 
-        public UpdateMissionStatusCommandHandler(IApplicationDbContext context, ICurrentUserService currentUserService)
+        public UpdateMissionStatusCommandHandler(
+            IApplicationDbContext context, 
+            ICurrentUserService currentUserService,
+            INotificationService notificationService)
         {
             _context = context;
             _currentUserService = currentUserService;
+            _notificationService = notificationService;
         }
 
         public async Task<MissionDto> Handle(UpdateMissionStatusCommand request, CancellationToken cancellationToken)
@@ -39,11 +46,69 @@ namespace TaviLi.Application.Features.Missions.Commands.UpdateStatus
             }
 
             // 4. עדכון הסטטוס
-            // (כאן אפשר להוסיף בעתיד בדיקות לוגיות, למשל: אי אפשר לעבור מ"פתוח" ישר ל"הושלם")
             mission.Status = request.Status;
 
             // 5. שמירה
             await _context.SaveChangesAsync(cancellationToken);
+
+            // Notification Logic
+            if (!string.IsNullOrEmpty(mission.CreatorUserId)) 
+            {
+                string title = "עדכון משלוח";
+                string body = $"הסטטוס של המשלוח שלך שונה ל-{request.Status}.";
+                string type = "Info";
+
+                // Customize message based on status
+                // Assuming statuses like: 0=Open, 1=Accepted, 2=PickedUp, 3=Delivered
+                // We should check the Enum definition to be sure, but using general Hebrew text is safe.
+                // Translate status to Hebrew
+                // Translate status to Hebrew
+                switch (request.Status)
+                {
+                    case MissionStatus.Open:
+                         title = "משימה נפתחה";
+                         body = "המשימה פתוחה להצעות.";
+                         type = "Info";
+                         break;
+                    case MissionStatus.Accepted:
+                        title = "המשלוח התקבל! 🎁";
+                        body = "המשלוח אושר ליציאה לדרך.";
+                        type = "Info";
+                        break;
+                    case MissionStatus.InProgress_Pickup:
+                        title = "בדרך לאיסוף 🛵";
+                        body = "השליח בדרך לאסוף את החבילה.";
+                        type = "Info";
+                        break;
+                    case MissionStatus.Collected:
+                        title = "החבילה נאספה! 📦";
+                        body = "השליח אסף את החבילה והוא בדרך ליעד.";
+                        type = "Info";
+                        break;
+                    case MissionStatus.InProgress_Delivery:
+                        title = "בדרך ליעד 🚚";
+                        body = "השליח בדרך למסור את החבילה.";
+                        type = "Info";
+                        break;
+                    case MissionStatus.Completed:
+                        title = "המשלוח נמסר! ✅";
+                        body = "החבילה הגיעה ליעדה בהצלחה. תודה שהשתמשת ב-TaviLi!";
+                        type = "Success";
+                        break;
+                    default:
+                        // Log unexpected status?
+                        body = $"הסטטוס של המשלוח שונה ל-{request.Status}";
+                        break;
+                }
+
+                await _notificationService.SendToUserAsync(
+                    Guid.Parse(mission.CreatorUserId),
+                    title,
+                    body,
+                    actionUrl: "/missions/my-missions",
+                    type: type
+                );
+            }
 
             // 6. החזרת DTO מעודכן
             return new MissionDto

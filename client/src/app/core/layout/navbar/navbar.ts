@@ -14,7 +14,7 @@ import { NotificationService } from '../../services/notification.service';
 export class Navbar {
   authService = inject(AuthService);
   public router = inject(Router);
-  private notify = inject(NotificationService);
+  public notify = inject(NotificationService);
   private eRef = inject(ElementRef);
 
   @HostListener('document:click', ['$event'])

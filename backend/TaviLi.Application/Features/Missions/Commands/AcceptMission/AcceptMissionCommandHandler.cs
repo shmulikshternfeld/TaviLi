@@ -10,11 +10,16 @@ namespace TaviLi.Application.Features.Missions.Commands.AcceptMission
     {
         private readonly IApplicationDbContext _context;
         private readonly ICurrentUserService _currentUserService;
+        private readonly INotificationService _notificationService;
 
-        public AcceptMissionCommandHandler(IApplicationDbContext context, ICurrentUserService currentUserService)
+        public AcceptMissionCommandHandler(
+            IApplicationDbContext context, 
+            ICurrentUserService currentUserService,
+            INotificationService notificationService)
         {
             _context = context;
             _currentUserService = currentUserService;
+            _notificationService = notificationService;
         }
 
         public async Task<MissionDto> Handle(AcceptMissionCommand request, CancellationToken cancellationToken)
@@ -50,6 +55,18 @@ namespace TaviLi.Application.Features.Missions.Commands.AcceptMission
 
             // 5. שמירה ב-DB
             await _context.SaveChangesAsync(cancellationToken);
+
+            // Notification
+            if (!string.IsNullOrEmpty(mission.CreatorUserId))
+            {
+                await _notificationService.SendToUserAsync(
+                    Guid.Parse(mission.CreatorUserId),
+                    "המשלוח התקבל! 🛵",
+                    "שליח לקח את המשימה שלך והוא בדרך לאיסוף.",
+                    actionUrl: "/my-missions",
+                    type: "Success"
+                );
+            }
 
             // 6. החזרת DTO מעודכן
             return new MissionDto

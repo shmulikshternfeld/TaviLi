@@ -163,13 +163,15 @@ export class MissionDashboard implements OnInit, OnDestroy {
         setTimeout(() => this.closeModal(), 2000);
       },
       error: (err) => {
-        console.error(err);
+        console.error('Request Mission Error:', err);
         this.isRequesting.set(false);
         if (err.error?.message?.includes("Already requested") || err.status === 400) {
           this.hasAlreadyRequested.set(true);
           this.notify.error('כבר ביקשת', 'כבר שלחת בקשה למשלוח זה.');
         } else {
-          this.notify.error('אופס...', 'אירעה שגיאה בשליחת הבקשה.');
+          // Detailed error for debugging
+          const msg = err.error?.message || err.statusText || 'Unknown error';
+          this.notify.error('שגיאה', `פרטים: ${err.status} - ${msg}`);
         }
       }
     });
