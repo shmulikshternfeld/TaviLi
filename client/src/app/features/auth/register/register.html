@@ -28,8 +28,12 @@
           <div class="mb-4">
             <label for="password" class="form-label">סיסמה</label>
             <input type="password" id="password" class="form-control" formControlName="password"
-              placeholder="לפחות 4 תווים"
+              placeholder="לפחות 8 תווים"
               [class.is-invalid]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched">
+            <div *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched"
+              class="invalid-feedback">
+              הסיסמה חייבת להכיל לפחות 8 תווים
+            </div>
           </div>
 
           <div class="mb-4 bg-light p-3 rounded-3 border border-light">

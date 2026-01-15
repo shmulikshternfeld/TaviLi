@@ -7,6 +7,7 @@ import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { MissionService } from '../../../core/services/mission.service';
 import { MapboxService, MapboxFeature } from '../../../core/services/mapbox.service';
 import { PackageSize } from '../../../core/models/mission.model';
+import { NotificationService } from '../../../core/services/notification.service';
 
 @Component({
   selector: 'app-mission-form',
@@ -20,6 +21,7 @@ export class MissionForm {
   private missionService = inject(MissionService);
   private router = inject(Router);
   private mapboxService = inject(MapboxService);
+  private notificationService = inject(NotificationService);
 
   form: FormGroup;
   isSubmitting = false;
@@ -120,7 +122,7 @@ export class MissionForm {
   onSubmit(): void {
     if (this.form.invalid) return;
     if (!this.selectedPickupAddress || !this.selectedDropoffAddress) {
-      alert('יש לבחור כתובת מהרשימה');
+      this.notificationService.warning('כתובת חסרה', 'יש לבחור כתובת מהרשימה');
       return;
     }
 
@@ -153,6 +155,7 @@ export class MissionForm {
       error: (err) => {
         console.error(err);
         this.isSubmitting = false;
+        this.notificationService.error('שגיאה', 'אירעה שגיאה ביצירת המשלוח. אנא נסה שנית.');
       }
     });
   }
