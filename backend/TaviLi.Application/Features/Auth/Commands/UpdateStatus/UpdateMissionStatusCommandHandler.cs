@@ -101,11 +101,15 @@ namespace TaviLi.Application.Features.Missions.Commands.UpdateStatus
                         break;
                 }
 
+                // Encoding ID in URL to allow frontend to open specific modal
+                string safeActionUrl = $"/missions/my-created?openMissionId={mission.Id}";
+
                 await _notificationService.SendToUserAsync(
                     Guid.Parse(mission.CreatorUserId),
                     title,
                     body,
-                    actionUrl: "/missions/my-missions",
+                    data: null, // We use URL for simplicity
+                    actionUrl: safeActionUrl,
                     type: type
                 );
             }

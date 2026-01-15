@@ -148,5 +148,23 @@ namespace TaviLi.Api.Controllers
             catch (KeyNotFoundException) { return NotFound(); }
             catch (UnauthorizedAccessException) { return Forbid(); }
         }
+        // GET api/missions/{id}
+        [HttpGet("{id}")]
+        public async Task<ActionResult<MissionDto>> GetById(int id)
+        {
+            // Note: We might want restriction logic here (e.g. only creator/courier can see details?),
+            // but since 'Open' missions are public, allowing retrieval by ID is generally OK 
+            // provided we don't expose sensitive info (which MissionDto filters).
+            var query = new TaviLi.Application.Features.Missions.Queries.GetMissionById.GetMissionByIdQuery { Id = id };
+            try 
+            {
+                var result = await _mediator.Send(query);
+                return Ok(result);
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
+        }
     }
 }

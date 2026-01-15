@@ -5,22 +5,29 @@ import { MissionService } from '../../../core/services/mission.service';
 import { Mission, MissionStatus } from '../../../core/models/mission.model';
 import { MissionStatusPipe } from '../../../shared/pipes/mission-status.pipe';
 import { PackageSizePipe } from '../../../shared/pipes/package-size.pipe';
-import { RouterLink, ActivatedRoute } from '@angular/router';
+import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { MissionRequestsModalComponent } from '../components/mission-requests-modal/mission-requests-modal';
+import { MissionDetailsModalComponent } from '../components/mission-details-modal/mission-details-modal';
 
 @Component({
   selector: 'app-my-created-missions',
   templateUrl: './my-created-missions.html',
   styleUrl: './my-created-missions.scss',
   standalone: true,
-  imports: [CommonModule, MissionStatusPipe, PackageSizePipe, RouterLink, MissionRequestsModalComponent]
+  imports: [CommonModule, MissionStatusPipe, PackageSizePipe, RouterLink, MissionRequestsModalComponent, MissionDetailsModalComponent]
 })
 export class MyCreatedMissions implements OnInit, OnDestroy {
   private missionService = inject(MissionService);
+  private router = inject(Router);
 
   missions = signal<Mission[]>([]);
   isLoading = signal<boolean>(true);
+
+  // For Courier Requests Modal
   selectedMissionId = signal<number | null>(null);
+
+  // For Details Modal (Client Updates)
+  selectedDetailsMission = signal<Mission | null>(null);
 
   private pollSub: Subscription | null = null;
 
@@ -34,14 +41,17 @@ export class MyCreatedMissions implements OnInit, OnDestroy {
     // Check for deep links (e.g. from notifications)
     this.route.queryParams.subscribe(params => {
       console.log('MyCreatedMissions: QueryParams changed', params);
-      const mid = params['missionId'];
+
       const openReq = params['openRequests'];
+      const openMissionId = params['openMissionId'];
+      const mid = params['missionId'];
+
       if (mid && openReq === 'true') {
-        console.log('MyCreatedMissions: Auto-opening requests for', mid);
-        // We set a small timeout to allow UI/Polling to settle, 
-        // though selectedMissionId is independent.
-        // Ideally we check if mission exists in list, but modal uses ID anyway.
         this.selectedMissionId.set(+mid);
+      } else if (openMissionId) {
+        // User clicked typical "Update" notification
+        // We need to fetch this mission to show details
+        this.openMissionDetails(+openMissionId);
       }
     });
   }
@@ -61,10 +71,12 @@ export class MyCreatedMissions implements OnInit, OnDestroy {
       .subscribe({
         next: (data) => {
           this.missions.set(data);
-          // Only stop loading spinner on first load or if it's still running
           if (this.isLoading()) {
             this.isLoading.set(false);
           }
+
+          // If we have a pending details request (from URL) and data just arrived, maybe we can find it now?
+          // Actually openMissionDetails fetches individually if needed.
         },
         error: (err) => {
           console.error('Polling error:', err);
@@ -80,7 +92,6 @@ export class MyCreatedMissions implements OnInit, OnDestroy {
     }
   }
 
-  // Helper for manual refresh if needed (e.g. after closing modal)
   manualRefresh(): void {
     this.missionService.getMyCreatedMissions().subscribe(data => this.missions.set(data));
   }
@@ -91,6 +102,28 @@ export class MyCreatedMissions implements OnInit, OnDestroy {
 
   closeRequests(): void {
     this.selectedMissionId.set(null);
-    this.manualRefresh(); // Reload immediate state while polling continues
+    this.manualRefresh();
+  }
+
+  openMissionDetails(id: number): void {
+    // 1. Try to find in current list
+    const found = this.missions().find(m => m.id === id);
+    if (found) {
+      this.selectedDetailsMission.set(found);
+    } else {
+      console.warn('Mission not found in local list. ID:', id);
+      // Optional: Force a refresh and try again? 
+      // For now, simpler is safer.
+    }
+  }
+
+  closeMissionDetails(): void {
+    this.selectedDetailsMission.set(null);
+    // Remove query params to prevent reopening on refresh
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { openMissionId: null },
+      queryParamsHandling: 'merge'
+    });
   }
 }

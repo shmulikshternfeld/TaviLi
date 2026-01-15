@@ -70,7 +70,7 @@ namespace TaviLi.Application.Features.Missions.Commands.ApproveMissionRequest
                     Guid.Parse(request.CourierId),
                     "בקשתך אושרה! 🎉",
                     "אושרת לבצע את המשלוח. לחץ לצפייה ומעקב.",
-                    actionUrl: "/active-missions",
+                    actionUrl: "/missions/my-missions",
                     type: "Success"
                 );
             }

@@ -52,4 +52,10 @@
         }
     </div>
     }
+
+    <!-- Mission Details Modal -->
+    @if (selectedMission()) {
+    <app-mission-details-modal [mission]="selectedMission()" (close)="closeMissionDetails()">
+    </app-mission-details-modal>
+    }
 </div>

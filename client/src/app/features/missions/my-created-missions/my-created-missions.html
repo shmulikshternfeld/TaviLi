@@ -157,4 +157,10 @@
   <app-mission-requests-modal [missionId]="selectedMissionId()!" (close)="closeRequests()" (approved)="closeRequests()">
   </app-mission-requests-modal>
   }
+
+  <!-- Details Modal (for Updates) -->
+  @if (selectedDetailsMission()) {
+  <app-mission-details-modal [mission]="selectedDetailsMission()" (close)="closeMissionDetails()">
+  </app-mission-details-modal>
+  }
 </div>

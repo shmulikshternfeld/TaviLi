@@ -63,7 +63,7 @@ namespace TaviLi.Application.Features.Missions.Commands.AcceptMission
                     Guid.Parse(mission.CreatorUserId),
                     "המשלוח התקבל! 🛵",
                     "שליח לקח את המשימה שלך והוא בדרך לאיסוף.",
-                    actionUrl: "/my-missions",
+                    actionUrl: $"/missions/my-created?openMissionId={mission.Id}",
                     type: "Success"
                 );
             }
